@@ -3,10 +3,17 @@
  * src/lib/sampleData.ts. Run with `npm run prisma:seed` once DATABASE_URL
  * points at a real Postgres instance.
  */
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient, AssessmentSource } from "@prisma/client";
+import ws from "ws";
 import { demoTeam } from "../src/lib/sampleData";
 
-const prisma = new PrismaClient();
+neonConfig.webSocketConstructor = ws;
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaNeon(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const org = await prisma.organization.create({

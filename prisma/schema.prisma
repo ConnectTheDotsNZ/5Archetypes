@@ -2,7 +2,8 @@
 // See docs/BUILD_PLAN.md Section 3.1 and 7.1 for the reasoning behind these entities.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
