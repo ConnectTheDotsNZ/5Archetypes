@@ -3,15 +3,17 @@ import { getTeamMemberWithScores } from "@/lib/teamData";
 import { computeRelationship, ARCHETYPES, ELEMENTS } from "@/lib/archetypes";
 import { ScoreBar } from "@/components/ScoreBar";
 import { ArchetypeBadge } from "@/components/ArchetypeBadge";
+import { requireCurrentOrganization } from "@/lib/auth";
 
 export default async function TeamPairwiseReportPage({
   params,
 }: {
   params: { teamId: string; memberAId: string; memberBId: string };
 }) {
+  const org = await requireCurrentOrganization();
   const [a, b] = await Promise.all([
-    getTeamMemberWithScores(params.teamId, params.memberAId),
-    getTeamMemberWithScores(params.teamId, params.memberBId),
+    getTeamMemberWithScores(params.teamId, params.memberAId, org.id),
+    getTeamMemberWithScores(params.teamId, params.memberBId, org.id),
   ]);
   if (!a || !b) return notFound();
 

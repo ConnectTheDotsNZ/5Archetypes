@@ -46,6 +46,9 @@ model Organization {
 model User {
   id             String       @id @default(cuid())
   email          String       @unique
+  // Auth0's stable subject identifier for this user. Nullable so a MANAGER
+  // can be pre-provisioned by email (invited) before their first login.
+  auth0Sub       String?      @unique
   role           OrgRole      @default(ADMIN)
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])

@@ -4,11 +4,10 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getCurrentOrganization } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 
 async function requireOrgId(): Promise<string> {
-  const org = await getCurrentOrganization();
-  if (!org) throw new Error("No organization found — run `npm run prisma:seed` first.");
+  const org = await requireCurrentOrganization();
   return org.id;
 }
 

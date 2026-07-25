@@ -31,9 +31,9 @@ function latestAssessmentToScores(assessment: {
 }
 
 /** Loads a team and its members' latest assessment scores. Members without any assessment are omitted. */
-export async function getTeamWithScores(teamId: string): Promise<TeamWithScores | null> {
-  const team = await prisma.team.findUnique({
-    where: { id: teamId },
+export async function getTeamWithScores(teamId: string, organizationId: string): Promise<TeamWithScores | null> {
+  const team = await prisma.team.findFirst({
+    where: { id: teamId, organizationId },
     include: {
       members: {
         include: {
@@ -59,13 +59,14 @@ export async function getTeamWithScores(teamId: string): Promise<TeamWithScores 
   };
 }
 
-/** Loads a single member's latest assessment scores, scoped to a team. */
+/** Loads a single member's latest assessment scores, scoped to a team within an organization. */
 export async function getTeamMemberWithScores(
   teamId: string,
-  memberId: string
+  memberId: string,
+  organizationId: string
 ): Promise<TeamMemberWithScores | null> {
   const member = await prisma.member.findFirst({
-    where: { id: memberId, teamId },
+    where: { id: memberId, teamId, team: { organizationId } },
     include: {
       assessments: { orderBy: { takenAt: "desc" }, take: 1 },
     },

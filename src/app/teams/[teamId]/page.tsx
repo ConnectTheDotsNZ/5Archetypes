@@ -4,9 +4,11 @@ import { getTeamWithScores } from "@/lib/teamData";
 import { rankProfile, isShengNeighbor, isKeChallenger } from "@/lib/archetypes";
 import { ArchetypeBadge } from "@/components/ArchetypeBadge";
 import { ScoreBar } from "@/components/ScoreBar";
+import { requireCurrentOrganization } from "@/lib/auth";
 
 export default async function TeamPage({ params }: { params: { teamId: string } }) {
-  const team = await getTeamWithScores(params.teamId);
+  const org = await requireCurrentOrganization();
+  const team = await getTeamWithScores(params.teamId, org.id);
   if (!team) return notFound();
 
   const withPrimary = team.members.map((m) => ({ ...m, primary: rankProfile(m.scores)[0].element }));

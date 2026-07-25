@@ -3,9 +3,16 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 import ws from "ws";
 
-// Neon's serverless driver needs a WebSocket implementation outside edge
-// runtimes/browsers, where WebSocket is already a global.
-neonConfig.webSocketConstructor = ws;
+// Neon's serverless driver needs a WebSocket implementation on plain Node.js,
+// which has no global WebSocket to fall back on. Next.js Middleware (where
+// auth0.ts's onCallback also touches Prisma) runs on the Edge runtime, which
+// *does* provide a native WebSocket — forcing the Node-only `ws` package
+// there breaks with "ws does not work in the browser", since `ws` needs
+// Node's net/tls modules that don't exist in that runtime. See
+// https://github.com/neondatabase/serverless/blob/main/CONFIG.md#websocketconstructor-typeof-websocket--undefined
+if (typeof WebSocket === "undefined") {
+  neonConfig.webSocketConstructor = ws;
+}
 
 function makePrismaClient() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });

@@ -12,6 +12,7 @@
     "prisma:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^4.25.0",
     "@neondatabase/serverless": "^0.9.5",
     "@prisma/adapter-neon": "^5.17.0",
     "@prisma/client": "5.17.0",

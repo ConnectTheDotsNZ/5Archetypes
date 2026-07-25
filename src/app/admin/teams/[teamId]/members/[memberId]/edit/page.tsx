@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getCurrentOrganization } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 import { updateMember } from "@/app/admin/teams/actions";
 
 export default async function EditMemberPage({
@@ -11,8 +11,7 @@ export default async function EditMemberPage({
   params: { teamId: string; memberId: string };
   searchParams: { error?: string };
 }) {
-  const org = await getCurrentOrganization();
-  if (!org) return notFound();
+  const org = await requireCurrentOrganization();
 
   const member = await prisma.member.findFirst({
     where: { id: params.memberId, teamId: params.teamId, team: { organizationId: org.id } },

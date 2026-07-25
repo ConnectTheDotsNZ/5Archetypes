@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getCurrentOrganization } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 import { createTeam } from "./actions";
 
 export default async function AdminTeamsPage({
@@ -8,19 +8,7 @@ export default async function AdminTeamsPage({
 }: {
   searchParams: { error?: string };
 }) {
-  const org = await getCurrentOrganization();
-
-  if (!org) {
-    return (
-      <div className="space-y-2">
-        <h1 className="font-display text-3xl font-bold">Teams</h1>
-        <p className="text-muted">
-          No organization found yet. Run <code className="rounded bg-blush px-1">npm run prisma:seed</code>{" "}
-          (or create one another way) before managing teams.
-        </p>
-      </div>
-    );
-  }
+  const org = await requireCurrentOrganization();
 
   const teams = await prisma.team.findMany({
     where: { organizationId: org.id },

@@ -30,11 +30,20 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   This is the one file that should be treated as closest to "correct" —
   everything else is UI scaffolding around it.
 - `prisma/schema.prisma` — data model (Organization/User/Team/Member/
-  Assessment/GeneratedReport), not yet connected to any page.
+  Assessment/GeneratedReport), connected via `/teams/[teamId]` and
+  `/admin/teams/**`.
 - Demo pages under `src/app/teams/demo/**` — render the real logic above
   against fictional in-memory data (`src/lib/sampleData.ts`), so the
-  architecture is visibly provable without a database.
-- No auth, no CSV upload, no PDF generation, no real report copy yet.
+  architecture is visibly provable without a database. These stay
+  unauthenticated on purpose; every other `/teams/**` and `/admin/**` route
+  requires login.
+- Real Auth0 session auth (`src/lib/auth0.ts`, `src/middleware.ts`). Signing in
+  for the first time provisions an `Organization` + `User` row
+  (`src/lib/userProvisioning.ts`); `getCurrentOrganization()`/
+  `requireCurrentOrganization()` in `src/lib/auth.ts` are how every org-scoped
+  query resolves "the current org" — always go through those rather than
+  reading a param.
+- No CSV upload, no PDF generation, no real report copy yet.
 
 ## Non-negotiable open questions — do not silently resolve these
 
