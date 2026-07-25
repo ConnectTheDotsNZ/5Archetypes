@@ -15,10 +15,12 @@ then `docs/CLAUDE_CODE_KICKOFF.md` for the recommended build order.
   relationship computation. This is exercised end-to-end by the demo pages
   under `/teams/demo` using fictional data (`src/lib/sampleData.ts`), no
   database required.
-- **Scaffolded, not wired up**: the Prisma schema (`prisma/schema.prisma`)
-  and client (`src/lib/prisma.ts`) exist but no page queries them yet.
-  Auth, CSV upload, PDF generation, and the real report template content
-  are not built — see the kickoff doc for build order.
+- **Real**: Auth0-backed login (`src/lib/auth0.ts`, `src/middleware.ts`) and
+  org scoping (`src/lib/auth.ts`) — `/admin/teams/**` and the real
+  `/teams/[teamId]/**` pages require a session and only ever see the logged-in
+  user's own `Organization`. `/teams/demo` stays public/unauthenticated.
+- **Scaffolded, not wired up**: CSV upload, PDF generation, and the real
+  report template content are not built — see the kickoff doc for build order.
 
 ## Setup
 
@@ -36,13 +38,16 @@ then `docs/CLAUDE_CODE_KICKOFF.md` for the recommended build order.
    that only allows outbound HTTPS.
 5. `npm run prisma:seed` — loads one fictional demo org/team so the DB
    isn't empty once pages are wired up to it.
-6. `npm run dev` — runs at http://localhost:3000. Visit `/teams/demo` for
-   the working demo (uses in-memory sample data, not the DB, until step 1
-   of the kickoff doc is done).
+6. Add the five `AUTH0_*` vars to `.env` (see `.env.example`) from an Auth0
+   Regular Web App. Register `http://localhost:3000/api/auth/callback` as an
+   Allowed Callback URL and `http://localhost:3000` as an Allowed Logout URL
+   / Web Origin.
+7. `npm run dev` — runs at http://localhost:3000. Visit `/teams/demo` for the
+   unauthenticated in-memory demo, or `/admin/teams` to sign in and manage a
+   real org's teams.
 
 ## Tech stack
 
 Next.js (App Router) + TypeScript + Tailwind + Prisma/Postgres, per
-docs/BUILD_PLAN.md Section 7.2. Auth provider not yet chosen/installed —
-recommendation was Clerk or Auth0, left out of this scaffold so `npm install`
-doesn't require API keys you don't have yet.
+docs/BUILD_PLAN.md Section 7.2. Auth is Auth0 (`@auth0/nextjs-auth0`), wired
+up per docs/CLAUDE_CODE_KICKOFF.md Step 2.

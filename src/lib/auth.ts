@@ -1,13 +1,31 @@
-import { prisma } from "./prisma";
+import { redirect } from "next/navigation";
+import type { Organization } from "@prisma/client";
+import { auth0 } from "./auth0";
+import { ensureUserForSession, type CurrentUser } from "./userProvisioning";
 
 /**
- * Stand-in for real auth. Session-based login (Clerk/Auth0) is
- * docs/CLAUDE_CODE_KICKOFF.md Step 2 and hasn't been wired up yet. Until
- * then, treat the first Organization row as "the logged-in admin's org" —
- * every admin page/action should resolve the org through this function so
- * swapping in a real session lookup later is a one-file change, not a
- * find-and-replace across every page.
+ * The logged-in user (and their org), scoped to the current request's Auth0
+ * session. Every org-scoped query in the app should ultimately go through
+ * this — never re-derive "the current org" from a request param.
  */
-export async function getCurrentOrganization() {
-  return prisma.organization.findFirst({ orderBy: { createdAt: "asc" } });
+export async function getCurrentUser(): Promise<CurrentUser | null> {
+  const session = await auth0.getSession();
+  if (!session) return null;
+  return ensureUserForSession(session.user);
+}
+
+export async function getCurrentOrganization(): Promise<Organization | null> {
+  const user = await getCurrentUser();
+  return user?.organization ?? null;
+}
+
+/** Same as getCurrentUser(), but redirects to login instead of returning null. */
+export async function requireCurrentUser(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/api/auth/login");
+  return user;
+}
+
+export async function requireCurrentOrganization(): Promise<Organization> {
+  return (await requireCurrentUser()).organization;
 }

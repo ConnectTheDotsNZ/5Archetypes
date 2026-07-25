@@ -3,13 +3,15 @@ import { getTeamMemberWithScores } from "@/lib/teamData";
 import { rankProfile, ARCHETYPES, SEQUENCING_ROLE } from "@/lib/archetypes";
 import { ScoreBar } from "@/components/ScoreBar";
 import { ArchetypeBadge } from "@/components/ArchetypeBadge";
+import { requireCurrentOrganization } from "@/lib/auth";
 
 export default async function TeamMemberProfilePage({
   params,
 }: {
   params: { teamId: string; memberId: string };
 }) {
-  const member = await getTeamMemberWithScores(params.teamId, params.memberId);
+  const org = await requireCurrentOrganization();
+  const member = await getTeamMemberWithScores(params.teamId, params.memberId, org.id);
   if (!member) return notFound();
 
   const ranked = rankProfile(member.scores);

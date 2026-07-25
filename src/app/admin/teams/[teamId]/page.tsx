@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getCurrentOrganization } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import { createMember, deleteMember } from "../actions";
 
@@ -12,8 +12,7 @@ export default async function AdminTeamPage({
   params: { teamId: string };
   searchParams: { error?: string };
 }) {
-  const org = await getCurrentOrganization();
-  if (!org) return notFound();
+  const org = await requireCurrentOrganization();
 
   const team = await prisma.team.findFirst({
     where: { id: params.teamId, organizationId: org.id },
