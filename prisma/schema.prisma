@@ -1,0 +1,104 @@
+// Five Archetypes Platform — data model v1
+// See docs/BUILD_PLAN.md Section 3.1 and 7.1 for the reasoning behind these entities.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Region {
+  US
+  EU
+}
+
+enum AssessmentSource {
+  CSV_UPLOAD
+  MANUAL_ENTRY
+  CONNECTOR // future: native assessment delivery / external test connector
+}
+
+enum ReportKind {
+  INDIVIDUAL_PROFILE
+  PAIRWISE_WORKPLACE
+}
+
+enum OrgRole {
+  ADMIN
+  MANAGER
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  region    Region   @default(US)
+  createdAt DateTime @default(now())
+
+  users  User[]
+  teams  Team[]
+  reports GeneratedReport[]
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  role           OrgRole      @default(ADMIN)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+
+model Team {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  members        Member[]
+  createdAt      DateTime     @default(now())
+}
+
+model Member {
+  id          String       @id @default(cuid())
+  teamId      String
+  team        Team         @relation(fields: [teamId], references: [id])
+  name        String
+  roleTitle   String?
+  email       String?
+  assessments Assessment[]
+  createdAt   DateTime     @default(now())
+}
+
+// Five decimal scores (0-1), one per element. The exact scoring algorithm
+// that turns raw assessment answers into these decimals is NOT yet
+// documented — see docs/BUILD_PLAN.md Section 9, item 2. Until Carey
+// confirms it, `wood..water` are treated as an already-computed input
+// (from CSV/manual entry), not derived on our side from raw item scores.
+model Assessment {
+  id        String           @id @default(cuid())
+  memberId  String
+  member    Member           @relation(fields: [memberId], references: [id])
+  source    AssessmentSource
+  wood      Float
+  fire      Float
+  earth     Float
+  metal     Float
+  water     Float
+  takenAt   DateTime         @default(now())
+  rawImportRef String?       // e.g. original CSV filename/row, for audit/reprocessing
+  createdAt DateTime         @default(now())
+}
+
+model GeneratedReport {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  kind           ReportKind
+  memberAId      String
+  memberBId      String?      // null for INDIVIDUAL_PROFILE
+  contentJson    Json         // structured content assembled by the template engine
+  pdfPath        String?      // set once a PDF has been rendered
+  createdAt      DateTime     @default(now())
+}
