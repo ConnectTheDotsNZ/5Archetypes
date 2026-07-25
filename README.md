@@ -24,10 +24,16 @@ then `docs/CLAUDE_CODE_KICKOFF.md` for the recommended build order.
 
 1. Install Node 20+.
 2. `npm install`
-3. Copy `.env.example` to `.env` and point `DATABASE_URL` at a Postgres
-   instance (local Docker, or a free hosted instance — Neon, Supabase, and
-   Railway all have generous free tiers).
+3. Copy `.env.example` to `.env` and point `DATABASE_URL` at a
+   [Neon](https://neon.tech) Postgres project's connection string. The app
+   connects via the Neon serverless driver + Prisma driver adapter
+   (`src/lib/prisma.ts`, `driverAdapters` preview feature in
+   `prisma/schema.prisma`), which is Neon-specific — a plain local/Docker
+   Postgres won't work with this wiring.
 4. `npm run prisma:migrate` — creates the tables from `prisma/schema.prisma`.
+   This needs a plain TCP connection to the database (Prisma Migrate's engine
+   doesn't go through the driver adapter), so it won't work from a network
+   that only allows outbound HTTPS.
 5. `npm run prisma:seed` — loads one fictional demo org/team so the DB
    isn't empty once pages are wired up to it.
 6. `npm run dev` — runs at http://localhost:3000. Visit `/teams/demo` for
