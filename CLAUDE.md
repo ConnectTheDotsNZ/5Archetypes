@@ -43,7 +43,15 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   `requireCurrentOrganization()` in `src/lib/auth.ts` are how every org-scoped
   query resolves "the current org" — always go through those rather than
   reading a param.
-- No CSV upload, no PDF generation, no real report copy yet.
+- Score ingestion (`src/app/admin/teams/[teamId]/scores/**`): manual entry per
+  member plus a CSV upload wizard (map columns → preview every row → save).
+  The parsing/validation rules live in `src/lib/scoreIngestion.ts` and
+  `src/lib/csv.ts` and are shared verbatim by the client-side preview and the
+  server action, so the preview is a true dry run and the server stays
+  authoritative. Ingestion is append-only — each save adds an `Assessment`
+  row (tagged `MANUAL_ENTRY`/`CSV_UPLOAD`) and reports read the latest one.
+  Rows are matched to existing members by name and never create people.
+- No PDF generation, no real report copy yet.
 
 ## Non-negotiable open questions — do not silently resolve these
 

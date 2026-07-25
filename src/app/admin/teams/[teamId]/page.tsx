@@ -32,6 +32,29 @@ export default async function AdminTeamPage({
         <p className="text-muted">{org.name}</p>
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blush bg-white p-4">
+        <div className="text-sm">
+          <p className="font-semibold text-ink">Assessment scores</p>
+          <p className="text-muted">
+            Enter one member&apos;s five element scores by hand, or import the whole team from a CSV.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Link
+            href={`/admin/teams/${team.id}/scores`}
+            className="rounded border border-gold px-4 py-2 text-sm font-semibold text-gold hover:bg-gold/10"
+          >
+            Manage scores
+          </Link>
+          <Link
+            href={`/admin/teams/${team.id}/scores/upload`}
+            className="rounded bg-gold px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+          >
+            Upload CSV
+          </Link>
+        </div>
+      </div>
+
       {searchParams.error && (
         <p className="rounded border border-fire/30 bg-fire/10 p-3 text-sm text-fire">
           {searchParams.error}
@@ -62,6 +85,12 @@ export default async function AdminTeamPage({
                     <td className="p-2 text-muted">{member.email || "—"}</td>
                     <td className="p-2">
                       <div className="flex justify-end gap-3">
+                        <Link
+                          href={`/admin/teams/${team.id}/members/${member.id}/scores`}
+                          className="font-semibold text-gold hover:underline"
+                        >
+                          Scores
+                        </Link>
                         <Link
                           href={`/admin/teams/${team.id}/members/${member.id}/edit`}
                           className="font-semibold text-gold hover:underline"

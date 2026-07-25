@@ -4,30 +4,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentOrganization } from "@/lib/auth";
-
-async function requireOrgId(): Promise<string> {
-  const org = await requireCurrentOrganization();
-  return org.id;
-}
-
-/** Confirms a team belongs to the current org before any mutation touches it. */
-async function requireTeamInOrg(teamId: string): Promise<void> {
-  const orgId = await requireOrgId();
-  const team = await prisma.team.findFirst({ where: { id: teamId, organizationId: orgId } });
-  if (!team) throw new Error("Team not found in this organization.");
-}
-
-/** Confirms a member's team belongs to the current org before any mutation touches it. */
-async function requireMemberInOrg(memberId: string): Promise<{ teamId: string }> {
-  const orgId = await requireOrgId();
-  const member = await prisma.member.findFirst({
-    where: { id: memberId, team: { organizationId: orgId } },
-    select: { teamId: true },
-  });
-  if (!member) throw new Error("Member not found in this organization.");
-  return member;
-}
+import { requireOrgId, requireTeamInOrg, requireMemberInOrg } from "@/lib/orgScope";
 
 const teamSchema = z.object({
   name: z.string().trim().min(1, "Team name is required"),
