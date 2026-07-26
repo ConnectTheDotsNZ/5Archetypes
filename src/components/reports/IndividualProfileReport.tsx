@@ -171,16 +171,14 @@ export function IndividualProfileReport({
         </h2>
         <ContentBlockView label="Your primary archetype" block={framing.primaryArchetype} />
         <div className="fa-field">
-          <div className="fa-field-label">Natural allies (Sheng)</div>
-          <p className="fa-glossary">{framing.structural.shengExplainer}</p>
+          <div className="fa-field-label">Natural allies</div>
           <p>
             {model.shengNeighboursOfPrimary.join(" and ")} sit either side of {primary.element}, so
             they tend to be low-strain to work with.
           </p>
         </div>
         <div className="fa-field">
-          <div className="fa-field-label">Natural friction (Ke)</div>
-          <p className="fa-glossary">{framing.structural.keExplainer}</p>
+          <div className="fa-field-label">Natural challengers</div>
           <p>
             {model.keChallengersOfPrimary.join(" and ")} are {primary.element}&apos;s
             button-pushers. Productive friction to notice, not a problem to fix.
