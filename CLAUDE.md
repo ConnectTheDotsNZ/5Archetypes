@@ -66,6 +66,22 @@ were confirmed:
    Original short paraphrases (as used in `archetypes.ts`) are fine for
    internal/engineering reference; they are not appropriate as final
    customer-facing report copy.
+   **Update (2026-07-26, per Glenn, verbally, not yet in writing anywhere in
+   this repo):** Carey has given permission for this platform to use her book
+   and a signed NDA is in place. That resolves whether the platform is
+   *allowed* to draw on her material at all. It does not by itself mean any
+   specific generated narrative is *approved* — Carey still reviews/approves
+   the content library per the "Owner"/"What this is" sections above, and nothing
+   drafted by an LLM should be treated as final until she's actually seen it.
+   A full copy of *The Five Archetypes* (Tiller Press, 2020) was supplied in
+   chat and used to draft example narrative (see below) — but the book text
+   itself is not in this repo (source material, not platform code). The
+   content library (`src/lib/content/*.ts`) still ships with every block a
+   `PLACEHOLDER` pending Carey's actual review, and should stay that way
+   until she approves specific copy, drafted or otherwise. Her separate,
+   newer "Fields" relational framework (Blame Loop, Bridge, Water Doorway,
+   Distortions) is *not* covered by the book at all — no draft narrative for
+   those sections exists yet, from any source.
 
 ## Conventions
 
