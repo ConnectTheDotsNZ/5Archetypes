@@ -71,17 +71,6 @@ export const INDIVIDUAL_PROFILE_FRAMING = {
       "Your five element scores are listed from highest to lowest. The highest is your primary archetype; the lowest points at where you have the most room to grow.",
     scoreNote:
       "Scores come from your assessment exactly as it reported them. They are a snapshot of how you answered, not a fixed measure of who you are.",
-    // "Sheng" and "Ke" read as unexplained jargon (or typos) without this —
-    // they're the original Chinese names for the two fixed relationship
-    // types in Wu Xing, the Five Phase theory Traditional Chinese Medicine
-    // is built on. Carey's book draws its five elements from that same
-    // tradition, but describes both patterns in plain English rather than
-    // by their Chinese names — using the original terms here is a platform
-    // choice, not something quoted from her.
-    shengExplainer:
-      "“Sheng” (生, shēng, roughly “generating”) and “Ke” (克, kè, roughly “controlling”) aren't typos or something specific to any one person's results. They're the two named relationship types from Wu Xing, the Chinese Five Phase theory that Traditional Chinese Medicine is built on. Carey Davidson's Five Archetypes method explicitly draws its five elements (Wood, Fire, Earth, Metal, Water) from that same tradition, even though her own book describes these two patterns in plain English rather than by their Chinese names; this platform uses the original terms, the way “yin and yang” usually isn't translated either. The five elements sit on a repeating cycle: Wood → Fire → Earth → Metal → Water → back to Wood. “Sheng” names the generating relationship between neighbours on that cycle: each one traditionally feeds the next (wood fuels fire, fire's ash enriches earth, earth yields metal ore, metal collects and channels water, water feeds wood's growth), so neighbouring pairs tend to support each other with little effort.",
-    keExplainer:
-      "“Ke” names the cycle's other fixed relationship: pairs two steps apart, where one element traditionally restrains or checks the other (wood's roots break up earth, earth dams water, water douses fire, fire melts metal, metal's edge cuts wood). A Ke pairing isn't a conflict to avoid. It's a predictable, structural kind of friction, worth noticing and working with rather than a sign that something is wrong.",
   },
   introduction: pending("opening framing for the individual profile"),
   primaryArchetype: pending("what it means to lead with your primary archetype"),
