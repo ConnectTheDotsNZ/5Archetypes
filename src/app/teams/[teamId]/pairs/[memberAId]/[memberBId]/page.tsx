@@ -25,7 +25,7 @@ export default async function TeamPairwiseReportPage({
         <h1 className="font-display text-3xl font-bold">
           {a.name} &amp; {b.name}
         </h1>
-        <p className="text-muted">Workplace pairwise relationship report — draft placeholder</p>
+        <p className="text-muted">Workplace pairwise relationship report: draft placeholder</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -49,17 +49,24 @@ export default async function TeamPairwiseReportPage({
         <h2 className="font-display text-xl font-bold">Core dynamic</h2>
         <p className="mt-2 text-sm text-muted">
           {rel.sameLead
-            ? `Both share ${rel.primaryA} as their Primary — likely to reinforce each other's blind spots as much as their strengths.`
+            ? `Both share ${rel.primaryA} as their Primary. Likely to reinforce each other's blind spots as much as their strengths.`
             : `${a.name} leads with ${rel.primaryA} (${ARCHETYPES[rel.primaryA].nickname}); ${b.name} leads with ${rel.primaryB} (${ARCHETYPES[rel.primaryB].nickname}).`}
         </p>
+        {(rel.shengNeighbors || rel.keChallengers) && (
+          <p className="mt-2 rounded border border-blush bg-cream p-2 text-xs text-muted">
+            <strong className="text-ink">Sheng</strong> and <strong className="text-ink">Ke</strong> are
+            two fixed patterns from the Five Elements framework this system is built on, not typos: Sheng
+            neighbours support each other easily, Ke challengers naturally create friction.
+          </p>
+        )}
         {rel.shengNeighbors && (
           <p className="mt-2 text-sm text-wood">
-            These are Sheng-cycle neighbours — a natural, low-effort support pairing.
+            These are Sheng-cycle neighbours: a natural, low-effort support pairing.
           </p>
         )}
         {rel.keChallengers && (
           <p className="mt-2 text-sm text-fire">
-            These are Ke-cycle challengers — expect productive friction. Bridge
+            These are Ke-cycle challengers: expect productive friction, not a problem to fix. Bridge
             element: <strong>{rel.bridgeElement}</strong>.
           </p>
         )}
@@ -89,7 +96,7 @@ export default async function TeamPairwiseReportPage({
         Pairwise Report template (Core Dynamic / In Practice / Score Impact /
         Escalation Loop / Risks / Calibration Tools / Direct Script, blended
         with the Fields vocabulary) still needs to be authored with Carey and
-        wired into a content/templating layer — see docs/BUILD_PLAN.md Section
+        wired into a content/templating layer. See docs/BUILD_PLAN.md Section
         3.2 and 7.3, and docs/CLAUDE_CODE_KICKOFF.md.
       </p>
     </div>

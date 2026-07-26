@@ -25,7 +25,7 @@ export default function MemberProfilePage({ params }: { params: { memberId: stri
           <div key={r.element} className="rounded-lg border border-blush bg-white p-4">
             <div className="flex items-center justify-between">
               <div className="font-semibold">
-                {r.label} — {r.element}
+                {r.label}: {r.element}
               </div>
               <ArchetypeBadge element={r.element} />
             </div>
@@ -38,7 +38,7 @@ export default function MemberProfilePage({ params }: { params: { memberId: stri
       </div>
 
       <p className="text-xs text-muted">
-        This is a placeholder Individual Profile view — it is not the final
+        This is a placeholder Individual Profile view. It is not the final
         report template. See docs/BUILD_PLAN.md Section 3.2 for the intended
         content (needs list, stress patterns, self-care guidance) and
         docs/CLAUDE_CODE_KICKOFF.md for build order.
