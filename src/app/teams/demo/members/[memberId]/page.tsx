@@ -1,48 +1,31 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getDemoMember } from "@/lib/sampleData";
-import { rankProfile, ARCHETYPES, SEQUENCING_ROLE } from "@/lib/archetypes";
-import { ScoreBar } from "@/components/ScoreBar";
-import { ArchetypeBadge } from "@/components/ArchetypeBadge";
+import { loadDemoIndividualProfileModel } from "@/lib/reports/loadIndividualProfile";
+import { IndividualProfileReport } from "@/components/reports/IndividualProfileReport";
 
-export default function MemberProfilePage({ params }: { params: { memberId: string } }) {
-  const member = getDemoMember(params.memberId);
-  if (!member) return notFound();
-
-  const ranked = rankProfile(member.scores);
+export default function DemoMemberProfilePage({ params }: { params: { memberId: string } }) {
+  const model = loadDemoIndividualProfileModel({
+    memberId: params.memberId,
+    generatedAt: new Date(),
+  });
+  if (!model) return notFound();
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-bold">{member.name}</h1>
-        <p className="text-muted">{member.roleTitle}</p>
+      <div className="fa-no-print flex flex-wrap items-center justify-between gap-3">
+        <Link href="/teams/demo" className="text-sm font-semibold text-gold hover:underline">
+          ← Demo team
+        </Link>
+        <a
+          href={`/teams/demo/members/${params.memberId}/pdf`}
+          className="rounded bg-gold px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+        >
+          Download PDF
+        </a>
       </div>
 
-      <ScoreBar scores={member.scores} />
-
-      <div className="space-y-3">
-        <h2 className="font-display text-xl font-bold">Ranked profile</h2>
-        {ranked.map((r) => (
-          <div key={r.element} className="rounded-lg border border-blush bg-white p-4">
-            <div className="flex items-center justify-between">
-              <div className="font-semibold">
-                {r.label} — {r.element}
-              </div>
-              <ArchetypeBadge element={r.element} />
-            </div>
-            <p className="mt-1 text-sm text-muted">{ARCHETYPES[r.element].essence}</p>
-            <p className="mt-1 text-xs uppercase tracking-wide text-gold">
-              Sequencing role: {SEQUENCING_ROLE[r.element]}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <p className="text-xs text-muted">
-        This is a placeholder Individual Profile view — it is not the final
-        report template. See docs/BUILD_PLAN.md Section 3.2 for the intended
-        content (needs list, stress patterns, self-care guidance) and
-        docs/CLAUDE_CODE_KICKOFF.md for build order.
-      </p>
+      {/* Same component the PDF renders, so this page is a true preview. */}
+      <IndividualProfileReport model={model} />
     </div>
   );
 }

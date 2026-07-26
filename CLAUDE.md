@@ -75,7 +75,27 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
 - Member emails carry no interpretive content: the templates say scores were
   recorded and by whom, and omit the scores themselves. Anything that
   explains an archetype must come from Carey's approved library.
-- No PDF generation, no real report copy yet.
+- Individual Archetype Profile report + PDF export. One React template
+  (`src/components/reports/IndividualProfileReport.tsx`) renders both the web
+  view (`/teams/[teamId]/members/[memberId]`, and the demo equivalent) and the
+  PDF (`.../pdf` route), so the download can't drift from the preview. The
+  model is assembled by `src/lib/reports/individualProfile.ts` — the
+  "template engine" of BUILD_PLAN 7.3 — from computed data plus the content
+  library. PDF goes through the `PdfRenderer` seam in `src/lib/pdf/renderer.ts`
+  (headless Chromium via puppeteer-core); **Vercel would need a Chromium layer
+  added as a second branch there**, a container host would not.
+- **All report narrative copy is still a placeholder.**
+  `src/lib/content/individualProfile.ts` is the structured content library:
+  every block is `{ status: "PLACEHOLDER", awaiting }` and renders as
+  `[PLACEHOLDER — pending Carey's content library]` in the report. Approving
+  copy means changing data in that file, not the template. Do not fill those
+  blocks in with invented psychological content or book text.
+- Report styles are plain CSS in `src/components/reports/reportStyles.ts`, not
+  Tailwind — Chromium renders the PDF from `renderToStaticMarkup` output with
+  no Tailwind build attached, so one inlined stylesheet is what keeps PDF and
+  web identical. App chrome still uses Tailwind.
+- No Workplace Pairwise Relationship Report yet (Step 6); the team heatmap
+  still isn't wired to the real report pages (Step 7).
 
 ## Non-negotiable open questions — do not silently resolve these
 
