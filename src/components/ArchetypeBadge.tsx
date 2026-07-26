@@ -13,7 +13,7 @@ export function ArchetypeBadge({ element }: { element: Element }) {
     <span
       className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold font-body ${BADGE_COLOR[element]}`}
     >
-      {element} — {ARCHETYPES[element].nickname}
+      {element}: {ARCHETYPES[element].nickname}
     </span>
   );
 }

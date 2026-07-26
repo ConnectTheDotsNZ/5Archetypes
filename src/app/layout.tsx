@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Five Archetypes Platform (dev scaffold)",
-  description: "Phase 1 MVP scaffold — see CLAUDE.md and docs/BUILD_PLAN.md",
+  description: "Phase 1 MVP scaffold. See CLAUDE.md and docs/BUILD_PLAN.md",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <span className="font-display text-lg font-bold text-brick">
                 THE FIVE ARCHETYPES
               </span>{" "}
-              <span className="text-muted">— internal build scaffold</span>
+              <span className="text-muted">(internal build scaffold)</span>
             </div>
             <div className="flex items-center gap-4 text-sm font-semibold">
               <Link href="/admin/teams" className="text-gold hover:underline">
