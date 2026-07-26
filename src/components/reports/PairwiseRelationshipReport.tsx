@@ -15,7 +15,7 @@ import type { ContentBlock } from "@/lib/content/blocks";
 import type { ElementComparison, PairPerson, PairwiseReportModel } from "@/lib/reports/pairwiseReport";
 import { REPORT_CSS } from "./reportStyles";
 
-const PLACEHOLDER_MARKER = "[PLACEHOLDER — pending Carey's content library]";
+const PLACEHOLDER_MARKER = "[PLACEHOLDER: pending Carey's content library]";
 
 function formatPercent(score: number): string {
   return `${(score * 100).toFixed(1)}%`;
@@ -60,7 +60,7 @@ function PersonCard({ person }: { person: PairPerson }) {
       <div className="fa-pair-name">{person.name}</div>
       {person.roleTitle && <div className="fa-pair-role">{person.roleTitle}</div>}
       <div className="fa-pair-lead">
-        Leads with <strong>{person.primary}</strong> — {person.primaryNickname}
+        Leads with <strong>{person.primary}</strong>: {person.primaryNickname}
         <br />
         Lowest: {person.lowest} ({formatPercent(person.scores[person.lowest])})
       </div>
@@ -123,10 +123,10 @@ export function PairwiseRelationshipReport({
         <div className="fa-flags">
           {model.sameLead && <span className="fa-flag fa-flag-same">Same primary archetype</span>}
           {model.shengNeighbours && (
-            <span className="fa-flag fa-flag-ally">Sheng neighbours — natural allies</span>
+            <span className="fa-flag fa-flag-ally">Sheng neighbours: natural allies</span>
           )}
           {model.keChallengers && (
-            <span className="fa-flag fa-flag-friction">Ke challengers — button-pushers</span>
+            <span className="fa-flag fa-flag-friction">Ke challengers: button-pushers</span>
           )}
           {model.bridgeElement && (
             <span className="fa-flag">Bridge element: {model.bridgeElement}</span>
@@ -139,6 +139,11 @@ export function PairwiseRelationshipReport({
           )}
         </div>
 
+        {(model.shengNeighbours || model.keChallengers) && (
+          <p className="fa-section-purpose">
+            {model.shengNeighbours ? framing.structural.shengExplainer : framing.structural.keExplainer}
+          </p>
+        )}
         <p className="fa-section-purpose">{framing.structural.frictionNote}</p>
       </section>
 

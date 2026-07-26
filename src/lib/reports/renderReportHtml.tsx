@@ -60,7 +60,7 @@ export async function renderPairwiseReportHtml(model: PairwiseReportModel): Prom
   const body = renderToStaticMarkup(<PairwiseRelationshipReport model={model} omitStyles />);
 
   return documentShell({
-    title: `${model.a.name} & ${model.b.name} — Workplace Relationship Report`,
+    title: `${model.a.name} & ${model.b.name}: Workplace Relationship Report`,
     body,
   });
 }
