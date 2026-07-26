@@ -78,7 +78,10 @@ function challengersOf(element: Element): Element[] {
   return SHENG_CYCLE.filter((other) => isKeChallenger(element, other));
 }
 
-function toSection(ranked: RankedElement): ProfileSection {
+function toSection(
+  ranked: RankedElement,
+  contentLibrary: Record<Element, IndividualProfileContent>
+): ProfileSection {
   const archetype = ARCHETYPES[ranked.element];
   return {
     element: ranked.element,
@@ -89,7 +92,7 @@ function toSection(ranked: RankedElement): ProfileSection {
     essence: archetype.essence,
     stressState: archetype.stressState,
     sequencingRole: SEQUENCING_ROLE[ranked.element],
-    content: INDIVIDUAL_PROFILE_CONTENT[ranked.element],
+    content: contentLibrary[ranked.element],
   };
 }
 
@@ -98,21 +101,30 @@ export function buildIndividualProfileReport({
   scores,
   provenance = { source: null, takenAt: null, rawImportRef: null },
   generatedAt,
+  contentLibrary = INDIVIDUAL_PROFILE_CONTENT,
+  framing = INDIVIDUAL_PROFILE_FRAMING,
 }: {
   subject: ReportSubject;
   scores: ScoreProfile;
   provenance?: AssessmentProvenance;
   /** Passed in rather than read from the clock, so renders are reproducible. */
   generatedAt: Date;
+  /**
+   * Overrides the shared (Carey-pending) content library — used only by the
+   * demo loader (src/lib/content/demoNarrative.ts). Real org reports always
+   * use the default, so they never see anything Carey hasn't approved.
+   */
+  contentLibrary?: Record<Element, IndividualProfileContent>;
+  framing?: typeof INDIVIDUAL_PROFILE_FRAMING;
 }): IndividualProfileReportModel {
   const ranked = rankProfile(scores);
-  const sections = ranked.map(toSection);
+  const sections = ranked.map((r) => toSection(r, contentLibrary));
 
   const primary = sections[0];
   const lowest = sections[sections.length - 1];
 
   // `framing.structural` is our own wording, not a content block — skip it.
-  const framingBlocks = Object.values(INDIVIDUAL_PROFILE_FRAMING).filter(
+  const framingBlocks = Object.values(framing).filter(
     (value): value is ContentBlock => "status" in value
   );
   const contentBlocks = sections.flatMap((section) => [
@@ -132,7 +144,7 @@ export function buildIndividualProfileReport({
     lowest,
     shengNeighboursOfPrimary: neighboursOf(primary.element),
     keChallengersOfPrimary: challengersOf(primary.element),
-    framing: INDIVIDUAL_PROFILE_FRAMING,
+    framing,
     awaitingContentLibrary: [...framingBlocks, ...contentBlocks].every(
       (block) => block.status === "PLACEHOLDER"
     ),

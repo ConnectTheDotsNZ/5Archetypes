@@ -7,6 +7,7 @@
 
 import { prisma } from "../prisma";
 import { getDemoMember } from "../sampleData";
+import { buildDemoIndividualContent, DEMO_INDIVIDUAL_FRAMING } from "../content/demoNarrative";
 import {
   buildIndividualProfileReport,
   type IndividualProfileReportModel,
@@ -75,10 +76,12 @@ export function loadDemoIndividualProfileModel({
     subject: {
       name: member.name,
       roleTitle: member.roleTitle,
-      teamName: "Leadership Team (demo)",
-      organizationName: "Acme Legal (demo)",
+      teamName: "Legal & Admin Team",
+      organizationName: "LawFam",
     },
     scores: member.scores,
     generatedAt,
+    contentLibrary: buildDemoIndividualContent(member.name),
+    framing: DEMO_INDIVIDUAL_FRAMING,
   });
 }

@@ -24,6 +24,7 @@ import {
   PAIRWISE_FRAMING,
   PAIRWISE_SECTIONS,
   pairKey,
+  type PairKey,
   type PairwiseContent,
 } from "../content/pairwiseReport";
 import { allPlaceholders, type ContentBlock } from "../content/blocks";
@@ -120,6 +121,8 @@ export function buildPairwiseReport({
   teamName,
   organizationName,
   generatedAt,
+  contentLibrary = PAIRWISE_CONTENT,
+  framing = PAIRWISE_FRAMING,
 }: {
   subjectA: { name: string; roleTitle: string | null };
   subjectB: { name: string; roleTitle: string | null };
@@ -130,13 +133,20 @@ export function buildPairwiseReport({
   teamName: string | null;
   organizationName: string | null;
   generatedAt: Date;
+  /**
+   * Overrides the shared (Carey-pending) content library — used only by the
+   * demo loader (src/lib/content/demoNarrative.ts). Real org reports always
+   * use the default, so they never see anything Carey hasn't approved.
+   */
+  contentLibrary?: Record<PairKey, PairwiseContent>;
+  framing?: typeof PAIRWISE_FRAMING;
 }): PairwiseReportModel {
   const relationship = computeRelationship(scoresA, scoresB);
   const a = toPerson(subjectA, scoresA, provenanceA);
   const b = toPerson(subjectB, scoresB, provenanceB);
 
   const key = pairKey(a.primary, b.primary);
-  const pairContent: PairwiseContent = PAIRWISE_CONTENT[key];
+  const pairContent: PairwiseContent = contentLibrary[key];
 
   const comparisons: ElementComparison[] = ELEMENTS.map((element) => {
     const delta = relationship.deltas[element];
@@ -184,7 +194,7 @@ export function buildPairwiseReport({
     a.waterDoorway,
     b.distortion,
     b.waterDoorway,
-    ...Object.values(PAIRWISE_FRAMING).filter(
+    ...Object.values(framing).filter(
       (value): value is ContentBlock => "status" in value
     ),
   ];
@@ -206,7 +216,7 @@ export function buildPairwiseReport({
     sharedBlindSpots,
     sections,
     fields,
-    framing: PAIRWISE_FRAMING,
+    framing,
     awaitingContentLibrary: allPlaceholders(allBlocks),
   };
 }

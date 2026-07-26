@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { loadDemoIndividualProfileModel } from "@/lib/reports/loadIndividualProfile";
 import { IndividualProfileReport } from "@/components/reports/IndividualProfileReport";
+import { DEMO_NARRATIVE_DISCLAIMER } from "@/lib/content/demoNarrative";
 
 export default function DemoMemberProfilePage({ params }: { params: { memberId: string } }) {
   const model = loadDemoIndividualProfileModel({
@@ -23,6 +24,10 @@ export default function DemoMemberProfilePage({ params }: { params: { memberId: 
           Download PDF
         </a>
       </div>
+
+      <p className="rounded border border-gold bg-cream p-3 text-xs text-muted">
+        <strong className="text-ink">Example narrative.</strong> {DEMO_NARRATIVE_DISCLAIMER}
+      </p>
 
       {/* Same component the PDF renders, so this page is a true preview. */}
       <IndividualProfileReport model={model} />

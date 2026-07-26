@@ -64,3 +64,16 @@ export async function renderPairwiseReportHtml(model: PairwiseReportModel): Prom
     body,
   });
 }
+
+/**
+ * Inserts a visible banner right after <body>, for the demo PDF routes only
+ * (see src/lib/content/demoNarrative.ts) — the demo page components render
+ * the same text themselves for the web view, but PDF routes build the HTML
+ * document directly rather than through those page components.
+ */
+export function injectDemoDisclaimer(html: string, disclaimer: string): string {
+  const banner = `<div style="border:1px solid #b8860b;background:#fdf6e3;padding:10px 14px;margin:0 0 16px 0;font-family:sans-serif;font-size:11px;line-height:1.5;color:#3a2e00;"><strong>Example narrative.</strong> ${escapeHtml(
+    disclaimer
+  )}</div>`;
+  return html.replace("<body>", `<body>${banner}`);
+}
