@@ -34,6 +34,10 @@ enum MemberNotificationKind {
 
 enum MemberNotificationStatus {
   PENDING
+  // Claimed by a drain pass and handed to the email provider. A row stuck
+  // here means the process died mid-send; it is deliberately not retried
+  // automatically, since we can't tell whether the message went out.
+  SENDING
   SENT
   FAILED
   CANCELLED

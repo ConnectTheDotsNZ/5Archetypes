@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { requireCurrentUser } from "@/lib/auth";
 import { requireTeamInOrg, requireMemberInOrg } from "@/lib/orgScope";
 import { parseCsv } from "@/lib/csv";
+import { drainMemberNotifications } from "@/lib/memberNotifications";
 import {
   MAX_CSV_CHARS,
   SCORE_SCALES,
@@ -111,6 +112,49 @@ async function applyNotificationRequests({
 /** Member notifications are an org ADMIN's call, not a MANAGER's. */
 function notificationsRequested(options: NotificationOptions): boolean {
   return options.notifyScoresReceived || options.sendReportWhenReady;
+}
+
+/**
+ * Sends this team's queued member emails.
+ *
+ * Manual for now — an admin presses the button and sees the result. A cron or
+ * queue worker calling drainMemberNotifications() is the obvious next step,
+ * but a visible button is the right shape while the provider is still being
+ * proven against a real mailbox.
+ */
+export async function sendQueuedNotifications(teamId: string) {
+  const user = await requireCurrentUser();
+  await requireTeamInOrg(teamId);
+
+  if (user.role !== "ADMIN") {
+    redirect(
+      `${scoresPath(teamId)}?error=${encodeURIComponent(
+        "Only an organisation admin can send member notifications."
+      )}`
+    );
+  }
+
+  const summary = await drainMemberNotifications({
+    organizationId: user.organizationId,
+    teamId,
+  });
+
+  revalidatePath(scoresPath(teamId));
+
+  if (summary.notConfiguredReason) {
+    redirect(
+      `${scoresPath(teamId)}?error=${encodeURIComponent(
+        `Email isn't configured yet, so nothing was sent. ${summary.notConfiguredReason}`
+      )}`
+    );
+  }
+
+  const parts = [`Sent ${summary.sent} member email(s) via ${summary.providerName}.`];
+  if (summary.failed > 0) parts.push(`${summary.failed} failed — see the queue below.`);
+  if (summary.deferred > 0) {
+    parts.push(`${summary.deferred} still waiting on report generation.`);
+  }
+  redirect(`${scoresPath(teamId)}?saved=${encodeURIComponent(parts.join(" "))}`);
 }
 
 // --- Manual entry ---------------------------------------------------------

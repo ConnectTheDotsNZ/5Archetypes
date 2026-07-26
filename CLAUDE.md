@@ -54,11 +54,27 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   people — an admin resolves an unmatched row with a per-row picker in the
   preview. Real exports drove this: score sheets carry title rows above the
   header, element columns in their own order, and often first names only.
-- Member-facing email is **requested but never sent**: an org `ADMIN` can tick
-  "notify" / "send their report" during a save, which queues a PENDING
-  `MemberNotification` and/or sets `Member.sendReportsToMember`. Nothing
-  drains that outbox — there's no provider wired up and no report to attach.
-  Report generation (Steps 5–6) is what should honour it.
+- Member-facing email: an org `ADMIN` can tick "notify" / "send their report"
+  during a save, which queues a PENDING `MemberNotification` and/or sets
+  `Member.sendReportsToMember`. `src/lib/memberNotifications.ts` drains the
+  outbox through the `EmailProvider` seam in `src/lib/email/provider.ts` —
+  Gmail SMTP (Google Workspace on connectthedots.co.nz, App Password) for
+  testing, `console` for local dev, and **nothing sent at all unless
+  `EMAIL_PROVIDER` is set**, by design. Sending is triggered by an admin
+  button on the scores page; a scheduled drain replaces it later.
+  `SCORES_RECEIVED` is the only sendable kind — `REPORT_READY` stays queued
+  until report generation exists (Steps 5–6) and should honour
+  `sendReportsToMember`. Rows are claimed (`SENDING`) before the provider is
+  called, so a drain can't double-send; a row stuck in `SENDING` is surfaced,
+  never auto-retried.
+- Consent is **deliberately unbuilt** for the MVP (owner's call): no opt-in
+  gate, no unsubscribe. The audit trail on `MemberNotification` (who asked,
+  which address, when) is what stands in for it. Consent belongs at org
+  signup, and is a prerequisite for the GDPR/EU work in Phase 2 — don't ship
+  member email to EU orgs before it exists.
+- Member emails carry no interpretive content: the templates say scores were
+  recorded and by whom, and omit the scores themselves. Anything that
+  explains an archetype must come from Carey's approved library.
 - No PDF generation, no real report copy yet.
 
 ## Non-negotiable open questions — do not silently resolve these
