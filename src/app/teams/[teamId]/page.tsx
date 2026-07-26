@@ -44,8 +44,8 @@ export default async function TeamPage({ params }: { params: { teamId: string } 
       <div>
         <h2 className="font-display text-xl font-bold">Pairwise flags</h2>
         <p className="mb-3 text-sm text-muted">
-          Sheng-neighbour pairs (natural allies) and Ke-challenger pairs (natural
-          button-pushers), based on each person&apos;s Primary element.
+          Natural-ally pairs and natural-challenger pairs (natural button-pushers), based
+          on each person&apos;s Primary element.
         </p>
         <table className="w-full border-collapse overflow-hidden rounded-lg border border-blush bg-white text-sm">
           <thead>
@@ -66,8 +66,8 @@ export default async function TeamPage({ params }: { params: { teamId: string } 
                       {a.name} &amp; {b.name}
                     </td>
                     <td className="p-2">
-                      {neighbor && <span className="text-wood">Natural allies (Sheng)</span>}
-                      {challenger && <span className="text-fire">Button-pushers (Ke)</span>}
+                      {neighbor && <span className="text-wood">Natural allies</span>}
+                      {challenger && <span className="text-fire">Natural challengers: button-pushers</span>}
                       {!neighbor && !challenger && <span className="text-muted">No direct cycle link</span>}
                     </td>
                     <td className="p-2 text-right">
@@ -84,15 +84,6 @@ export default async function TeamPage({ params }: { params: { teamId: string } 
             )}
           </tbody>
         </table>
-        <p className="mt-3 rounded border border-blush bg-cream p-3 text-xs text-muted">
-          <strong className="text-ink">Sheng</strong> and <strong className="text-ink">Ke</strong> are
-          two fixed patterns from the Five Elements framework this system is built on, not typos. The
-          five elements sit on a repeating cycle (Wood → Fire → Earth → Metal → Water → back to Wood).
-          <strong className="text-ink"> Sheng</strong> neighbours sit next to each other on it and tend
-          to support each other easily; <strong className="text-ink">Ke</strong> challengers sit two
-          steps apart and naturally create friction. Neither is good or bad: Ke friction is a
-          predictable dynamic worth noticing, not a problem to fix.
-        </p>
       </div>
     </div>
   );

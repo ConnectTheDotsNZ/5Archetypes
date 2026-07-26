@@ -52,21 +52,14 @@ export default async function TeamPairwiseReportPage({
             ? `Both share ${rel.primaryA} as their Primary. Likely to reinforce each other's blind spots as much as their strengths.`
             : `${a.name} leads with ${rel.primaryA} (${ARCHETYPES[rel.primaryA].nickname}); ${b.name} leads with ${rel.primaryB} (${ARCHETYPES[rel.primaryB].nickname}).`}
         </p>
-        {(rel.shengNeighbors || rel.keChallengers) && (
-          <p className="mt-2 rounded border border-blush bg-cream p-2 text-xs text-muted">
-            <strong className="text-ink">Sheng</strong> and <strong className="text-ink">Ke</strong> are
-            two fixed patterns from the Five Elements framework this system is built on, not typos: Sheng
-            neighbours support each other easily, Ke challengers naturally create friction.
-          </p>
-        )}
         {rel.shengNeighbors && (
           <p className="mt-2 text-sm text-wood">
-            These are Sheng-cycle neighbours: a natural, low-effort support pairing.
+            These two are natural allies: a low-effort support pairing.
           </p>
         )}
         {rel.keChallengers && (
           <p className="mt-2 text-sm text-fire">
-            These are Ke-cycle challengers: expect productive friction, not a problem to fix. Bridge
+            These two are natural challengers: expect productive friction, not a problem to fix. Bridge
             element: <strong>{rel.bridgeElement}</strong>.
           </p>
         )}
