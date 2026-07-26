@@ -153,13 +153,6 @@ export const PAIRWISE_FRAMING = {
       "Both people shape the space between them, so either one can change the dynamic without waiting for the other.",
     frictionNote:
       "Friction between two archetypes is information about the pairing, not a fault in either person.",
-    // "Sheng" and "Ke" read as unexplained jargon (or typos) without this;
-    // they're fixed terms from the Five Elements framework this system is
-    // built on, not something specific to this one pairing.
-    shengExplainer:
-      "“Sheng” names one of two fixed patterns in the Five Elements framework this system is built on, not a typo. The five elements sit on a repeating cycle (Wood → Fire → Earth → Metal → Water → back to Wood); elements next to each other on it are Sheng neighbours, and tend to support each other easily.",
-    keExplainer:
-      "“Ke” names the other fixed pattern: elements two steps apart on that same cycle are Ke challengers, and naturally create friction. That's not a problem to fix. It's a predictable dynamic worth noticing.",
   },
   introduction: pending("opening framing for a workplace pair"),
   fieldExplainer: pending("what the Field is, for a workplace audience"),

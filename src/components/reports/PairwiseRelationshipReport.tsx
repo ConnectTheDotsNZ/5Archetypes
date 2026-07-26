@@ -123,10 +123,10 @@ export function PairwiseRelationshipReport({
         <div className="fa-flags">
           {model.sameLead && <span className="fa-flag fa-flag-same">Same primary archetype</span>}
           {model.shengNeighbours && (
-            <span className="fa-flag fa-flag-ally">Sheng neighbours: natural allies</span>
+            <span className="fa-flag fa-flag-ally">Natural allies</span>
           )}
           {model.keChallengers && (
-            <span className="fa-flag fa-flag-friction">Ke challengers: button-pushers</span>
+            <span className="fa-flag fa-flag-friction">Natural challengers: button-pushers</span>
           )}
           {model.bridgeElement && (
             <span className="fa-flag">Bridge element: {model.bridgeElement}</span>
@@ -139,11 +139,6 @@ export function PairwiseRelationshipReport({
           )}
         </div>
 
-        {(model.shengNeighbours || model.keChallengers) && (
-          <p className="fa-section-purpose">
-            {model.shengNeighbours ? framing.structural.shengExplainer : framing.structural.keExplainer}
-          </p>
-        )}
         <p className="fa-section-purpose">{framing.structural.frictionNote}</p>
       </section>
 
@@ -216,8 +211,8 @@ export function PairwiseRelationshipReport({
             <div className="fa-field-label">Bridge element</div>
             <p>
               {model.sameLead
-                ? "Both of you lead with the same archetype, so there is no element sitting between you on the Sheng cycle."
-                : "These two archetypes sit next to each other on the Sheng cycle, so there is no bridge element between them."}
+                ? "Both of you lead with the same archetype, so there is no element sitting between you on the cycle."
+                : "These two archetypes sit next to each other on the cycle, so there is no bridge element between them."}
             </p>
           </div>
         )}

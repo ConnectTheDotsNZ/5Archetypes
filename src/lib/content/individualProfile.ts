@@ -56,13 +56,6 @@ export const INDIVIDUAL_PROFILE_FRAMING = {
       "Your five element scores are listed from highest to lowest. The highest is your primary archetype; the lowest points at where you have the most room to grow.",
     scoreNote:
       "Scores come from your assessment exactly as it reported them. They are a snapshot of how you answered, not a fixed measure of who you are.",
-    // "Sheng" and "Ke" read as unexplained jargon (or typos) without this —
-    // they're fixed terms from the Five Elements framework this system is
-    // built on, not something specific to any one person's profile.
-    shengExplainer:
-      "“Sheng” names one of two fixed patterns in the Five Elements framework this system is built on, not a typo. The five elements sit on a repeating cycle (Wood → Fire → Earth → Metal → Water → back to Wood); elements next to each other on it are Sheng neighbours, and tend to support each other easily.",
-    keExplainer:
-      "“Ke” names the other fixed pattern: elements two steps apart on that same cycle are Ke challengers, and naturally create friction. That's not a problem to fix. It's a predictable dynamic worth noticing.",
   },
   introduction: pending("opening framing for the individual profile"),
   primaryArchetype: pending("what it means to lead with your primary archetype"),
