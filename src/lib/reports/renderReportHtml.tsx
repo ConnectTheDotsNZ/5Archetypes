@@ -10,7 +10,9 @@
 
 import { REPORT_CSS, REPORT_PRINT_CSS } from "@/components/reports/reportStyles";
 import { IndividualProfileReport } from "@/components/reports/IndividualProfileReport";
+import { PairwiseRelationshipReport } from "@/components/reports/PairwiseRelationshipReport";
 import type { IndividualProfileReportModel } from "./individualProfile";
+import type { PairwiseReportModel } from "./pairwiseReport";
 
 function escapeHtml(value: string): string {
   return value
@@ -48,6 +50,17 @@ export async function renderIndividualProfileHtml(
 
   return documentShell({
     title: `${model.subject.name} — Individual Archetype Profile`,
+    body,
+  });
+}
+
+export async function renderPairwiseReportHtml(model: PairwiseReportModel): Promise<string> {
+  const { renderToStaticMarkup } = await import("react-dom/server");
+
+  const body = renderToStaticMarkup(<PairwiseRelationshipReport model={model} omitStyles />);
+
+  return documentShell({
+    title: `${model.a.name} & ${model.b.name} — Workplace Relationship Report`,
     body,
   });
 }

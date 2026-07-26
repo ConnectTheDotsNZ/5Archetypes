@@ -14,20 +14,9 @@
  */
 
 import { ELEMENTS, type Element } from "../archetypes";
+import { allPlaceholders, pending, type ContentBlock } from "./blocks";
 
-export type ContentBlock =
-  | {
-      status: "PLACEHOLDER";
-      /** What Carey still owes us, shown verbatim in the rendered report. */
-      awaiting: string;
-    }
-  | {
-      status: "APPROVED";
-      paragraphs?: string[];
-      bullets?: string[];
-      /** Where the approved copy came from, for audit (e.g. "content-library v1"). */
-      sourceRef?: string;
-    };
+export type { ContentBlock };
 
 export type IndividualProfileContent = {
   /** What this archetype needs to stay at its best. */
@@ -37,10 +26,6 @@ export type IndividualProfileContent = {
   /** Self-care / regulation guidance. */
   selfCare: ContentBlock;
 };
-
-function pending(awaiting: string): ContentBlock {
-  return { status: "PLACEHOLDER", awaiting };
-}
 
 /**
  * Per-element copy. Every block is a placeholder until Carey's content
@@ -89,5 +74,5 @@ export function contentLibraryIsUnapproved(): boolean {
   const framingBlocks = Object.values(INDIVIDUAL_PROFILE_FRAMING).filter(
     (value): value is ContentBlock => "status" in value
   );
-  return [...elementBlocks, ...framingBlocks].every((block) => block.status === "PLACEHOLDER");
+  return allPlaceholders([...elementBlocks, ...framingBlocks]);
 }
