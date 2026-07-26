@@ -1,4 +1,59 @@
-# Deploying the MVP to a subdomain
+# Deploying the MVP
+
+Two separate goals, two different answers:
+
+- **"I want to click through it today"** → deploy to Vercel. Minutes, no
+  server to manage, PDF export works. See "Quick preview on Vercel" below.
+- **"I want it live on a connectthedots.co.nz subdomain"** → a container host.
+  See "Deploying to a subdomain" further down. Takes longer to set up, costs
+  a small amount monthly, but is the shape this should run in longer-term.
+
+Nothing about the second option requires having done the first — pick either
+one first, independently.
+
+## Quick preview on Vercel
+
+This gets a shareable `https://something.vercel.app` URL with the full app —
+including working PDF export — running.
+
+1. Push this repo to GitHub (if not already) and import it on
+   [vercel.com/new](https://vercel.com/new). Framework preset: Next.js,
+   detected automatically.
+2. Set these environment variables in the Vercel project (Settings →
+   Environment Variables):
+   ```
+   DATABASE_URL=            # a Neon connection string — free tier is enough
+   AUTH0_SECRET=            # openssl rand -hex 32
+   AUTH0_BASE_URL=          # filled in after the first deploy gives you a URL
+   AUTH0_CLIENT_ID=
+   AUTH0_CLIENT_SECRET=
+   AUTH0_ISSUER_BASE_URL=
+   ```
+   Leave `EMAIL_PROVIDER`, `PDF_RENDERER` and `CHROMIUM_PATH` **unset**. PDF
+   export auto-detects Vercel (via the `VERCEL` variable Vercel sets on every
+   deployment, no action needed) and uses `@sparticuz/chromium` — a Chromium
+   build compiled small enough to ship inside a serverless function — instead
+   of the container path.
+3. Deploy. Once you have the assigned URL, go back and set `AUTH0_BASE_URL`
+   to it, and add that same URL as an Allowed Callback URL
+   (`<url>/api/auth/callback`), Logout URL, and Web Origin on the Auth0
+   application.
+4. Apply migrations once, from your own machine, pointed at the same
+   `DATABASE_URL`: `npx prisma migrate deploy`. Optionally `npm run
+   prisma:seed` for the fictional demo org.
+
+**What to expect to work:** everything — the demo pages need no
+configuration at all, and login/teams/ingestion/both reports/both PDF
+exports all work once the env vars above are set. Verify in the same order
+as the subdomain checklist below.
+
+**Why this isn't the final answer:** Vercel is a fine permanent home for the
+app itself, but running Chromium in a 250MB-ish serverless function on every
+PDF request is slower and pricier at real volume than a container with
+Chromium already resident. Treat this as "look at it now," not "where it
+lives."
+
+## Deploying to a subdomain (connectthedots.co.nz)
 
 Target: something like `archetypes.connectthedots.co.nz`, so the MVP can be
 clicked through and shown to design-partner clients before any decision about
@@ -41,12 +96,12 @@ used, by pointing a DNS record at a host that can run it.
    - Allowed Callback URL: `https://archetypes.connectthedots.co.nz/api/auth/callback`
    - Allowed Logout URL and Web Origin: `https://archetypes.connectthedots.co.nz`
 
-Vercel is deliberately *not* the recommendation for this MVP: it's an
-excellent fit for the Next.js part, but its serverless runtime has no
-Chromium, so PDF export would need `puppeteer-core` plus a Chromium layer
-(`@sparticuz/chromium`) wired in as a second branch of `getPdfRenderer()`.
-That's a half-day of work we can do whenever hosting is settled — it just
-isn't needed if the app runs in a container.
+Vercel isn't the recommendation for the *permanent* subdomain — see the
+container-vs-serverless cost/latency note at the end of the Vercel section
+above — but it's no longer a functionality gap: `getPdfRenderer()` already
+has a `@sparticuz/chromium` branch that Vercel picks up automatically (see
+"Quick preview on Vercel" above). Use whichever hosting shape fits how this
+gets rolled out; both produce identical PDFs.
 
 ## Environment variables
 

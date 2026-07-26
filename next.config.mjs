@@ -14,6 +14,10 @@ const nextConfig = {
       "ws",
       "puppeteer-core",
       "nodemailer",
+      // Ships a compressed Chromium build it locates relative to its own
+      // __dirname; bundling would break that path resolution the same way
+      // it would break puppeteer-core's.
+      "@sparticuz/chromium",
     ],
   },
 };

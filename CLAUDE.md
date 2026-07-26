@@ -81,9 +81,10 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   PDF (`.../pdf` route), so the download can't drift from the preview. The
   model is assembled by `src/lib/reports/individualProfile.ts` — the
   "template engine" of BUILD_PLAN 7.3 — from computed data plus the content
-  library. PDF goes through the `PdfRenderer` seam in `src/lib/pdf/renderer.ts`
-  (headless Chromium via puppeteer-core); **Vercel would need a Chromium layer
-  added as a second branch there**, a container host would not.
+  library. PDF goes through the `PdfRenderer` seam in `src/lib/pdf/renderer.ts`,
+  which supports both hosting shapes: a container/VPS's installed Chromium via
+  puppeteer-core, and Vercel's serverless runtime via `@sparticuz/chromium`
+  (auto-selected from Vercel's own `VERCEL` env var — see `docs/DEPLOYMENT.md`).
 - **All report narrative copy is still a placeholder.**
   `src/lib/content/individualProfile.ts` is the structured content library:
   every block is `{ status: "PLACEHOLDER", awaiting }` and renders as
