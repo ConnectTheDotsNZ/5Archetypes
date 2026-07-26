@@ -50,7 +50,15 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   server action, so the preview is a true dry run and the server stays
   authoritative. Ingestion is append-only — each save adds an `Assessment`
   row (tagged `MANUAL_ENTRY`/`CSV_UPLOAD`) and reports read the latest one.
-  Rows are matched to existing members by name and never create people.
+  Rows match existing members by **email first, then name**, and never create
+  people — an admin resolves an unmatched row with a per-row picker in the
+  preview. Real exports drove this: score sheets carry title rows above the
+  header, element columns in their own order, and often first names only.
+- Member-facing email is **requested but never sent**: an org `ADMIN` can tick
+  "notify" / "send their report" during a save, which queues a PENDING
+  `MemberNotification` and/or sets `Member.sendReportsToMember`. Nothing
+  drains that outbox — there's no provider wired up and no report to attach.
+  Report generation (Steps 5–6) is what should honour it.
 - No PDF generation, no real report copy yet.
 
 ## Non-negotiable open questions — do not silently resolve these

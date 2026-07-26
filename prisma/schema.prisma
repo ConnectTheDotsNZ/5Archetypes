@@ -27,6 +27,18 @@ enum ReportKind {
   PAIRWISE_WORKPLACE
 }
 
+enum MemberNotificationKind {
+  SCORES_RECEIVED // "your assessment scores have been recorded"
+  REPORT_READY // "here is your Individual Archetype Profile"
+}
+
+enum MemberNotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
 enum OrgRole {
   ADMIN
   MANAGER
@@ -41,6 +53,7 @@ model Organization {
   users  User[]
   teams  Team[]
   reports GeneratedReport[]
+  memberNotifications MemberNotification[]
 }
 
 model User {
@@ -53,6 +66,8 @@ model User {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   createdAt      DateTime     @default(now())
+
+  requestedNotifications MemberNotification[]
 }
 
 model Team {
@@ -73,6 +88,38 @@ model Member {
   email       String?
   assessments Assessment[]
   createdAt   DateTime     @default(now())
+
+  // Set by an org ADMIN, not by the member: whether this person should be
+  // emailed their own report once one exists. Consulted at report-generation
+  // time (Phase 1 Steps 5-6) rather than acted on here. Requires `email`.
+  sendReportsToMember Boolean @default(false)
+
+  notifications MemberNotification[]
+}
+
+// Outbox of member-facing emails an admin has asked for. Rows are created
+// PENDING and nothing drains them yet: there is no email provider wired up
+// and no report to attach (docs/BUILD_PLAN.md Steps 5-6). Recording the
+// request — with who asked and the address at the time — keeps the decision
+// auditable, which matters for a report about someone's own profile.
+model MemberNotification {
+  id             String                   @id @default(cuid())
+  organizationId String
+  organization   Organization             @relation(fields: [organizationId], references: [id])
+  memberId       String
+  member         Member                   @relation(fields: [memberId], references: [id])
+  // The ingestion that prompted it, where there was one.
+  assessmentId   String?
+  assessment     Assessment?              @relation(fields: [assessmentId], references: [id])
+  kind           MemberNotificationKind
+  status         MemberNotificationStatus @default(PENDING)
+  // Captured at request time: the member's address may change or be cleared later.
+  emailAtRequest String
+  requestedById  String?
+  requestedBy    User?                    @relation(fields: [requestedById], references: [id])
+  createdAt      DateTime                 @default(now())
+  sentAt         DateTime?
+  failureReason  String?
 }
 
 // Five decimal scores (0-1), one per element. The exact scoring algorithm
@@ -93,6 +140,8 @@ model Assessment {
   takenAt   DateTime         @default(now())
   rawImportRef String?       // e.g. original CSV filename/row, for audit/reprocessing
   createdAt DateTime         @default(now())
+
+  notifications MemberNotification[]
 }
 
 model GeneratedReport {

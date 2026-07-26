@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentOrganization } from "@/lib/auth";
+import { requireCurrentUser } from "@/lib/auth";
 import { ELEMENTS, type Element } from "@/lib/archetypes";
 import { SCORE_SCALES, SCORE_SCALE_LABELS } from "@/lib/scoreIngestion";
 import { AssessmentSourceBadge } from "@/components/AssessmentSourceBadge";
@@ -32,10 +32,14 @@ export default async function ManualScoreEntryPage({
   params: { teamId: string; memberId: string };
   searchParams: { error?: string };
 }) {
-  const org = await requireCurrentOrganization();
+  const user = await requireCurrentUser();
 
   const member = await prisma.member.findFirst({
-    where: { id: params.memberId, teamId: params.teamId, team: { organizationId: org.id } },
+    where: {
+      id: params.memberId,
+      teamId: params.teamId,
+      team: { organizationId: user.organizationId },
+    },
     include: {
       team: { select: { name: true } },
       assessments: { orderBy: { takenAt: "desc" }, take: 10 },
@@ -131,6 +135,50 @@ export default async function ManualScoreEntryPage({
             </label>
           ))}
         </div>
+
+        {user.role === "ADMIN" && (
+          <fieldset className="rounded border border-blush bg-cream p-3 text-sm">
+            <legend className="px-1 font-semibold text-ink">
+              Tell {member.name.split(" ")[0]} (optional)
+            </legend>
+            {member.email ? (
+              <>
+                <label className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    name="notifyScoresReceived"
+                    className="mt-0.5 h-4 w-4 accent-gold"
+                  />
+                  <span>Let them know their scores have been recorded</span>
+                </label>
+                <label className="mt-2 flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    name="sendReportWhenReady"
+                    defaultChecked={member.sendReportsToMember}
+                    className="mt-0.5 h-4 w-4 accent-gold"
+                  />
+                  <span>Email them their own report once one is generated</span>
+                </label>
+                <p className="mt-2 text-xs text-muted">
+                  Requests are recorded against {member.email} now and sent once report generation
+                  and an email provider are in place — nothing is emailed today.
+                </p>
+              </>
+            ) : (
+              <p className="text-xs text-muted">
+                No email on file for {member.name}, so they can&apos;t be notified.{" "}
+                <Link
+                  href={`/admin/teams/${params.teamId}/members/${params.memberId}/edit`}
+                  className="font-semibold text-gold hover:underline"
+                >
+                  Add one
+                </Link>
+                .
+              </p>
+            )}
+          </fieldset>
+        )}
 
         <div className="flex items-center gap-3">
           <button

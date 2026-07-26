@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentOrganization } from "@/lib/auth";
+import { requireCurrentUser } from "@/lib/auth";
 import { CsvUploadWizard } from "@/components/CsvUploadWizard";
 
 export default async function CsvUploadPage({ params }: { params: { teamId: string } }) {
-  const org = await requireCurrentOrganization();
+  const user = await requireCurrentUser();
 
   const team = await prisma.team.findFirst({
-    where: { id: params.teamId, organizationId: org.id },
-    include: { members: { orderBy: { name: "asc" }, select: { id: true, name: true } } },
+    where: { id: params.teamId, organizationId: user.organizationId },
+    include: {
+      members: { orderBy: { name: "asc" }, select: { id: true, name: true, email: true } },
+    },
   });
   if (!team) return notFound();
 
@@ -38,10 +40,15 @@ export default async function CsvUploadPage({ params }: { params: { teamId: stri
           </p>
         </div>
       ) : (
-        // The wizard needs the member list client-side to match names while
-        // rendering its preview. Ids + names only — no scores leave the server
-        // for this step.
-        <CsvUploadWizard teamId={team.id} teamName={team.name} members={team.members} />
+        // The wizard needs the member list client-side to match rows while
+        // rendering its preview. Ids, names and emails only — no scores leave
+        // the server for this step.
+        <CsvUploadWizard
+          teamId={team.id}
+          teamName={team.name}
+          members={team.members}
+          canRequestNotifications={user.role === "ADMIN"}
+        />
       )}
     </div>
   );

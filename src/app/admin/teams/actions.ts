@@ -89,7 +89,16 @@ export async function updateMember(memberId: string, formData: FormData) {
 
 export async function deleteMember(memberId: string) {
   const { teamId } = await requireMemberInOrg(memberId);
-  await prisma.member.delete({ where: { id: memberId } });
+
+  // Assessments and queued notifications hold RESTRICT foreign keys to Member,
+  // so they have to go first — otherwise removing anyone who has ever had
+  // scores ingested fails on a constraint violation.
+  await prisma.$transaction([
+    prisma.memberNotification.deleteMany({ where: { memberId } }),
+    prisma.assessment.deleteMany({ where: { memberId } }),
+    prisma.member.delete({ where: { id: memberId } }),
+  ]);
+
   revalidatePath(`/admin/teams/${teamId}`);
   redirect(`/admin/teams/${teamId}`);
 }
