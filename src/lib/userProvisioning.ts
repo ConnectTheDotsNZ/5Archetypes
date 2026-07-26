@@ -24,7 +24,7 @@ export async function ensureUserForSession(auth0User: Auth0User): Promise<Curren
   if (existingBySub) return existingBySub;
 
   if (!auth0User.email) {
-    throw new Error("Auth0 profile has no email — cannot provision an account.");
+    throw new Error("Auth0 profile has no email. Cannot provision an account.");
   }
 
   const existingByEmail = await prisma.user.findUnique({
