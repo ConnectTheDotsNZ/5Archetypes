@@ -67,7 +67,7 @@ once; each is meant to be its own reviewed session.
 
 > Build the real Individual Archetype Profile report, replacing the
 > placeholder content in `src/app/teams/demo/members/[memberId]/page.tsx`.
-> Use `[PLACEHOLDER — pending Carey's content library]` for any narrative
+> Use `[PLACEHOLDER: pending Carey's content library]` for any narrative
 > copy that should ultimately come from Carey's approved content (needs
 > list, stress patterns, self-care guidance) rather than inventing
 > psychological content yourself. Then add a "Download PDF" action that
@@ -82,7 +82,7 @@ once; each is meant to be its own reviewed session.
 > Core Dynamic, In Practice, Score Impact, Predictable Escalation Loop,
 > Risks, Calibration Tools, Direct Script — plus the Fields concepts (Blame
 > Loop, Bridge element, Water Doorway) where the pair are Ke-challengers.
-> Use `[PLACEHOLDER — pending Carey's content library]` markers for any
+> Use `[PLACEHOLDER: pending Carey's content library]` markers for any
 > narrative text that should come from Carey rather than being invented.
 > Add PDF export the same way as Step 5.
 

@@ -78,7 +78,7 @@ export default async function TeamScoresPage({
             {team.members.length === 1 ? "member has" : "members have"} scores on file
           </p>
           <p className="text-muted">
-            Scores arrive already computed — enter them per member, or import a whole team from CSV.
+            Scores arrive already computed. Enter them per member, or import a whole team from CSV.
           </p>
         </div>
         <div className="flex gap-3">
@@ -103,7 +103,7 @@ export default async function TeamScoresPage({
         <h2 className="font-display text-lg font-bold">Latest scores by member</h2>
         {team.members.length === 0 ? (
           <p className="mt-2 text-sm text-muted">
-            No members on this team yet —{" "}
+            No members on this team yet.{" "}
             <Link href={`/admin/teams/${team.id}`} className="font-semibold text-gold hover:underline">
               add members first
             </Link>
@@ -242,7 +242,7 @@ export default async function TeamScoresPage({
 
           <p className="mt-3 text-xs text-muted">
             &ldquo;Report ready&rdquo; emails stay queued until report generation exists (Steps
-            5&ndash;6). Sending is manual for now — a scheduled drain replaces this button later.
+            5&ndash;6). Sending is manual for now. A scheduled drain replaces this button later.
           </p>
         </div>
       )}

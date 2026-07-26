@@ -150,7 +150,7 @@ export async function sendQueuedNotifications(teamId: string) {
   }
 
   const parts = [`Sent ${summary.sent} member email(s) via ${summary.providerName}.`];
-  if (summary.failed > 0) parts.push(`${summary.failed} failed — see the queue below.`);
+  if (summary.failed > 0) parts.push(`${summary.failed} failed. See the queue below.`);
   if (summary.deferred > 0) {
     parts.push(`${summary.deferred} still waiting on report generation.`);
   }
@@ -341,7 +341,7 @@ export async function saveCsvAssessments(input: CsvImportInput): Promise<CsvImpo
   if (preview.readyRows.length === 0) {
     return {
       ok: false,
-      error: "No rows could be imported — every row still has a problem.",
+      error: "No rows could be imported. Every row still has a problem.",
       issues: preview.skippedRows.slice(0, 5).map((row) => `Row ${row.rowNumber}: ${row.issues[0]}`),
     };
   }
