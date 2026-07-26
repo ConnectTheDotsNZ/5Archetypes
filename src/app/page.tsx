@@ -7,7 +7,7 @@ export default function HomePage() {
       <p className="max-w-2xl text-muted">
         This is a starting skeleton, not a finished product. It demonstrates the
         core archetype relationship logic (src/lib/archetypes.ts) end-to-end
-        against fictional demo data — no database connection required yet.
+        against fictional demo data. No database connection required yet.
         Read <code className="rounded bg-blush px-1">CLAUDE.md</code> and{" "}
         <code className="rounded bg-blush px-1">docs/BUILD_PLAN.md</code> before
         extending this.

@@ -31,7 +31,7 @@ export default async function AdminTeamsPage({
 
       <div className="rounded-lg border border-blush bg-white p-4">
         {teams.length === 0 ? (
-          <p className="text-sm text-muted">No teams yet — create the first one below.</p>
+          <p className="text-sm text-muted">No teams yet. Create the first one below.</p>
         ) : (
           <ul className="divide-y divide-blush">
             {teams.map((team) => (

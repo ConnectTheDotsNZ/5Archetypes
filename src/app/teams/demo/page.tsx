@@ -10,7 +10,7 @@ export default function DemoTeamPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-3xl font-bold">Leadership Team — heatmap</h1>
+        <h1 className="font-display text-3xl font-bold">Leadership Team: heatmap</h1>
         <p className="text-muted">Fictional demo data. Click any two members for a pairwise report.</p>
       </div>
 
@@ -78,6 +78,15 @@ export default function DemoTeamPage() {
             )}
           </tbody>
         </table>
+        <p className="mt-3 rounded border border-blush bg-cream p-3 text-xs text-muted">
+          <strong className="text-ink">Sheng</strong> and <strong className="text-ink">Ke</strong> are
+          two fixed patterns from the Five Elements framework this system is built on, not typos. The
+          five elements sit on a repeating cycle (Wood → Fire → Earth → Metal → Water → back to Wood).
+          <strong className="text-ink"> Sheng</strong> neighbours sit next to each other on it and tend
+          to support each other easily; <strong className="text-ink">Ke</strong> challengers sit two
+          steps apart and naturally create friction. Neither is good or bad: Ke friction is a
+          predictable dynamic worth noticing, not a problem to fix.
+        </p>
       </div>
     </div>
   );
