@@ -10,8 +10,12 @@ export default function DemoTeamPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-3xl font-bold">Leadership Team: heatmap</h1>
-        <p className="text-muted">Fictional demo data. Click any two members for a pairwise report.</p>
+        <h1 className="font-display text-3xl font-bold">LawFam: heatmap</h1>
+        <p className="text-muted">
+          Example data: role titles and element scores from a real small team&apos;s assessment
+          results, used with permission, with every name replaced by a fake one. Click any two
+          members for a pairwise report.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
