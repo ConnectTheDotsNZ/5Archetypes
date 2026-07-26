@@ -16,7 +16,7 @@ import type {
 import { REPORT_CSS } from "./reportStyles";
 
 /** The marker docs/CLAUDE_CODE_KICKOFF.md Step 5 asks for, rendered verbatim. */
-const PLACEHOLDER_MARKER = "[PLACEHOLDER — pending Carey's content library]";
+const PLACEHOLDER_MARKER = "[PLACEHOLDER: pending Carey's content library]";
 
 function formatPercent(score: number): string {
   return `${(score * 100).toFixed(1)}%`;
@@ -60,7 +60,7 @@ function ElementCard({ section }: { section: ProfileSection }) {
             {section.label} · rank {section.rank} of {ELEMENTS.length}
           </div>
           <h3>
-            {section.element} — <span className="fa-nickname">{section.nickname}</span>
+            {section.element}: <span className="fa-nickname">{section.nickname}</span>
           </h3>
         </div>
         <div className="fa-card-score">
@@ -167,11 +167,12 @@ export function IndividualProfileReport({
 
       <section className="fa-section">
         <h2>
-          Leading with {primary.element} — {primary.nickname}
+          Leading with {primary.element}: {primary.nickname}
         </h2>
         <ContentBlockView label="Your primary archetype" block={framing.primaryArchetype} />
         <div className="fa-field">
-          <div className="fa-field-label">Natural allies on the Sheng cycle</div>
+          <div className="fa-field-label">Natural allies (Sheng)</div>
+          <p className="fa-glossary">{framing.structural.shengExplainer}</p>
           <p>
             {model.shengNeighboursOfPrimary.join(" and ")} sit either side of {primary.element}, so
             they tend to be low-strain to work with.
@@ -179,16 +180,17 @@ export function IndividualProfileReport({
         </div>
         <div className="fa-field">
           <div className="fa-field-label">Natural friction (Ke)</div>
+          <p className="fa-glossary">{framing.structural.keExplainer}</p>
           <p>
             {model.keChallengersOfPrimary.join(" and ")} are {primary.element}&apos;s
-            button-pushers — productive friction to notice rather than a problem to fix.
+            button-pushers. Productive friction to notice, not a problem to fix.
           </p>
         </div>
       </section>
 
       <section className="fa-section">
         <h2>
-          Your lowest element — {lowest.element} ({formatPercent(lowest.score)})
+          Your lowest element: {lowest.element} ({formatPercent(lowest.score)})
         </h2>
         <ContentBlockView label="Working with your lowest element" block={framing.lowestArchetype} />
       </section>

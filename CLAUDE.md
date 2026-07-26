@@ -87,7 +87,7 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
 - **All report narrative copy is still a placeholder.**
   `src/lib/content/individualProfile.ts` is the structured content library:
   every block is `{ status: "PLACEHOLDER", awaiting }` and renders as
-  `[PLACEHOLDER — pending Carey's content library]` in the report. Approving
+  `[PLACEHOLDER: pending Carey's content library]` in the report. Approving
   copy means changing data in that file, not the template. Do not fill those
   blocks in with invented psychological content or book text.
 - Report styles are plain CSS in `src/components/reports/reportStyles.ts`, not

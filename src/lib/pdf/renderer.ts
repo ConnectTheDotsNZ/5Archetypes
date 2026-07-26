@@ -70,7 +70,7 @@ async function findChromium(): Promise<string> {
   }
 
   throw new PdfNotConfiguredError(
-    "No Chromium binary found for PDF export. Set CHROMIUM_PATH to a Chromium/Chrome executable — see .env.example."
+    "No Chromium binary found for PDF export. Set CHROMIUM_PATH to a Chromium/Chrome executable. See .env.example."
   );
 }
 

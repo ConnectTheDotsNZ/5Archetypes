@@ -47,7 +47,7 @@ export async function renderIndividualProfileHtml(
   );
 
   return documentShell({
-    title: `${model.subject.name} — Individual Archetype Profile`,
+    title: `${model.subject.name}: Individual Archetype Profile`,
     body,
   });
 }

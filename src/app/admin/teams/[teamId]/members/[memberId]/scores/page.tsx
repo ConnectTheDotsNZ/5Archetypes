@@ -74,7 +74,7 @@ export default async function ManualScoreEntryPage({
         </h1>
         <p className="text-muted">
           {member.name}
-          {member.roleTitle ? ` — ${member.roleTitle}` : ""} · {member.team.name}
+          {member.roleTitle ? ` · ${member.roleTitle}` : ""} · {member.team.name}
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export default async function ManualScoreEntryPage({
           */}
           <p className="mt-1 text-sm text-muted">
             Enter the scores as they came out of the assessment. The platform stores them as
-            given — it doesn&apos;t recompute or rescale them.
+            given. It doesn&apos;t recompute or rescale them.
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export default async function ManualScoreEntryPage({
                 </label>
                 <p className="mt-2 text-xs text-muted">
                   Requests are recorded against {member.email} now and sent once report generation
-                  and an email provider are in place — nothing is emailed today.
+                  and an email provider are in place. Nothing is emailed today.
                 </p>
               </>
             ) : (
@@ -237,7 +237,7 @@ export default async function ManualScoreEntryPage({
                     <td className="p-2">
                       <AssessmentSourceBadge source={assessment.source} />
                     </td>
-                    <td className="p-2 text-xs text-muted">{assessment.rawImportRef ?? "—"}</td>
+                    <td className="p-2 text-xs text-muted">{assessment.rawImportRef ?? "(none)"}</td>
                   </tr>
                 ))}
               </tbody>
