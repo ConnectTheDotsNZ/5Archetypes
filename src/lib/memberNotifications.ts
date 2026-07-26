@@ -36,7 +36,7 @@ export function renderMemberNotification({
   const firstName = memberName.trim().split(/\s+/)[0] || memberName;
 
   if (kind === MemberNotificationKind.SCORES_RECEIVED) {
-    // [PLACEHOLDER — pending Carey's content library] final wording.
+    // [PLACEHOLDER: pending Carey's content library] final wording.
     const lines = [
       `Hi ${firstName},`,
       "",
@@ -44,7 +44,7 @@ export function renderMemberNotification({
       "",
       "Your individual profile will follow once it has been prepared. There's nothing you need to do in the meantime.",
       "",
-      "— The Five Archetypes platform",
+      "The Five Archetypes platform",
     ];
     return {
       to: "", // filled in by the caller from the queued address
@@ -56,7 +56,7 @@ export function renderMemberNotification({
     };
   }
 
-  throw new Error(`No template yet for ${kind} — report generation lands in Steps 5-6.`);
+  throw new Error(`No template yet for ${kind}. Report generation lands in Steps 5-6.`);
 }
 
 function escapeHtml(value: string): string {

@@ -64,7 +64,7 @@ export default async function AdminTeamPage({
       <div className="rounded-lg border border-blush bg-white p-4">
         <h2 className="font-display text-lg font-bold">Members</h2>
         {team.members.length === 0 ? (
-          <p className="mt-2 text-sm text-muted">No members yet — add the first one below.</p>
+          <p className="mt-2 text-sm text-muted">No members yet. Add the first one below.</p>
         ) : (
           <table className="mt-3 w-full border-collapse text-sm">
             <thead>
@@ -81,8 +81,8 @@ export default async function AdminTeamPage({
                 return (
                   <tr key={member.id} className="border-b border-blush last:border-0">
                     <td className="p-2 font-semibold">{member.name}</td>
-                    <td className="p-2 text-muted">{member.roleTitle || "—"}</td>
-                    <td className="p-2 text-muted">{member.email || "—"}</td>
+                    <td className="p-2 text-muted">{member.roleTitle || "(none)"}</td>
+                    <td className="p-2 text-muted">{member.email || "(none)"}</td>
                     <td className="p-2">
                       <div className="flex justify-end gap-3">
                         <Link
