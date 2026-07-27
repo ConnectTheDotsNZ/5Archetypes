@@ -196,6 +196,22 @@ tools) that Carey authors and approves once per archetype/pair, assembled
 by a templating engine driven by the computed data model, with an optional
 LLM pass only for smoothing connective narrative sentences.
 
+**Update (2026-07-27, per Glenn):** the paragraph above is superseded on
+one point — Carey was never expected to write the 161 blocks herself. The
+library is AI-generated, grounded in her book (permission + NDA confirmed,
+Section 9 item 1) and whatever else she supplies, and her role is to
+quality-check the generated MVP output and give feedback in rounds until
+she approves it — reviewing, not authoring. The rest of the paragraph
+still holds: it's a structured library assembled by a templating engine,
+not a live "prompt an LLM to write the whole report" pipeline. Content is
+drafted and approved once per archetype/pair and then reused, the same
+caching economics as a hand-authored library would have — only the author
+of the first draft changed. Her separate "Fields" material (the Field,
+Three Pillars, Blame Loop, Bridge, Water Doorway, Distortions) has no
+source material anywhere yet, book or otherwise, so those blocks remain
+undraftable until she supplies something to ground them in — this update
+doesn't change that.
+
 ## 8. Branding Direction
 
 Pulled from fivearchetypes.com (Carey has no formal brand guide yet):
