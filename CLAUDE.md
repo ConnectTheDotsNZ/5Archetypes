@@ -161,11 +161,24 @@ were confirmed:
   provisional.
 - Multi-tenancy: every domain table carries (or descends from) an
   `organizationId`. Do not introduce a table that can't be scoped to an org.
-- Report generation direction (see BUILD_PLAN Section 7.3): the long-term
-  approach is a structured, Carey-approved content library assembled by a
-  template engine, with LLM use limited to smoothing connective prose — not
-  a "prompt an LLM to write the whole report" approach. Don't build toward
-  the latter by default.
+- Report generation direction (see BUILD_PLAN Section 7.3): a structured
+  content library assembled by a template engine, computed data injected
+  per real person/pair at render time. **Update (2026-07-27, per Glenn):**
+  Carey was never expected to author the 161 blocks herself — the library
+  is AI-generated (grounded in her book, and whatever else she supplies),
+  and her role is to quality-check generated MVP output and give feedback
+  in rounds until she approves it, the same review relationship she has
+  with individual reports, just applied one level up. The
+  library-plus-templating-engine architecture is unchanged; only the
+  authorship of a block's first draft is — an LLM drafts it, and
+  "approved" means she's reviewed and signed off on AI-drafted copy, not
+  written it herself. Still not a live "prompt an LLM to write the whole
+  report" pipeline: content is drafted and approved once per archetype/pair
+  and reused, same caching economics as a hand-authored library. Her
+  separate "Fields" material (Blame Loop, Bridge, Water Doorway,
+  Distortions) has no source anywhere yet (not the book, not supplied
+  separately), so those blocks stay undraftable regardless of this change
+  until she gives us something to ground them in.
 - Never invent or reproduce Carey's actual assessment questionnaire items —
   ingestion assumes scores arrive already computed (CSV/manual entry).
 
