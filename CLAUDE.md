@@ -94,8 +94,26 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   Tailwind — Chromium renders the PDF from `renderToStaticMarkup` output with
   no Tailwind build attached, so one inlined stylesheet is what keeps PDF and
   web identical. App chrome still uses Tailwind.
-- No Workplace Pairwise Relationship Report yet (Step 6); the team heatmap
-  still isn't wired to the real report pages (Step 7).
+- Workplace Pairwise Relationship Report + PDF, same architecture as the
+  individual one (`src/components/reports/PairwiseRelationshipReport.tsx`,
+  model in `src/lib/reports/pairwiseReport.ts`). Structure is BUILD_PLAN 3.2's
+  merged template — Core Dynamic, In Practice, Score Impact, Escalation Loop,
+  Risks, Calibration Tools, Direct Script — plus the Fields layer (Blame Loop,
+  Bridge element, Water Doorway, Distortions, three pillars) where it applies.
+  Pairwise copy lives in `src/lib/content/pairwiseReport.ts`, keyed by the
+  **pair of primary archetypes** (15 unordered pairs, same-lead included),
+  since that's the unit Carey approves once and the platform reuses for every
+  pair of people leading with those elements. All placeholders.
+- `src/lib/content/blocks.ts` holds the shared `ContentBlock` type used by both
+  libraries. Bridge/Blame-Loop/Distortion wording quoted in BUILD_PLAN 2.3 is
+  from Carey's own report and is deliberately **not** reproduced in the library.
+- Both report pages (`/teams/[teamId]/...` and the `/teams/demo/...` mirrors)
+  render the same components as their `.../pdf` routes. The demo PDF routes are
+  intentionally unauthenticated: they render `sampleData.ts` only, which makes
+  the export path testable without a login or a database.
+- Phase 1's build order (docs/CLAUDE_CODE_KICKOFF.md Steps 1–7) is complete.
+  The team heatmap at `/teams/[teamId]` already carried the Sheng/Ke flag table
+  and report links from Step 1, so Step 7 needed no further work.
 
 ## Non-negotiable open questions — do not silently resolve these
 

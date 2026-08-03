@@ -144,6 +144,44 @@ export const REPORT_CSS = `
 .fa-inline-list { margin: 0.3rem 0 0; padding-left: 1.1rem; }
 .fa-inline-list li { margin: 0.15rem 0; }
 
+/* --- pairwise report --------------------------------------------------- */
+
+.fa-pair-grid {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.6rem;
+}
+.fa-pair-person {
+  flex: 1 1 0;
+  border: 1px solid var(--blush);
+  border-radius: 6px;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+}
+.fa-pair-name { font-weight: 700; }
+.fa-pair-role { color: var(--muted); font-size: 0.78rem; }
+.fa-pair-lead { margin-top: 0.35rem; font-size: 0.85rem; }
+
+.fa-flags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
+.fa-flag {
+  border: 1px solid var(--blush);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--cream);
+}
+.fa-flag-ally { border-color: var(--wood); color: var(--wood); }
+.fa-flag-friction { border-color: var(--fire); color: var(--fire); }
+.fa-flag-same { border-color: var(--gold); color: #6b5326; }
+
+.fa-delta-pos { color: var(--wood); font-weight: 600; }
+.fa-delta-neg { color: var(--water); font-weight: 600; }
+.fa-delta-zero { color: var(--muted); }
+
+.fa-section-purpose { color: var(--muted); font-size: 0.8rem; margin-top: 0.1rem; }
+
 .fa-footer {
   margin-top: 2rem;
   border-top: 1px solid var(--blush);
