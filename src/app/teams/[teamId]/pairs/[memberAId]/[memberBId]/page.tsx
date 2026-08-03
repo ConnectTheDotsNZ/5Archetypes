@@ -9,7 +9,7 @@ export default async function TeamPairwiseReportPage({
 }: {
   params: { teamId: string; memberAId: string; memberBId: string };
 }) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
 
   const model = await loadPairwiseReportModel({
     teamId: params.teamId,

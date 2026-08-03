@@ -12,7 +12,7 @@ export default async function AdminTeamPage({
   params: { teamId: string };
   searchParams: { error?: string };
 }) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
 
   const team = await prisma.team.findFirst({
     where: { id: params.teamId, organizationId: org.id },

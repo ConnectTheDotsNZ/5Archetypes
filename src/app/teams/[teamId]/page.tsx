@@ -7,7 +7,7 @@ import { ScoreBar } from "@/components/ScoreBar";
 import { requireCurrentOrganization } from "@/lib/auth";
 
 export default async function TeamPage({ params }: { params: { teamId: string } }) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
   const team = await getTeamWithScores(params.teamId, org.id);
   if (!team) return notFound();
 

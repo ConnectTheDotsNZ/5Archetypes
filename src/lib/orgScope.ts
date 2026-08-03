@@ -12,8 +12,8 @@ import { prisma } from "./prisma";
 import { requireCurrentOrganization } from "./auth";
 
 export async function requireOrgId(): Promise<string> {
-  const org = await requireCurrentOrganization();
-  return org.id;
+  const { organization } = await requireCurrentOrganization();
+  return organization.id;
 }
 
 /** Confirms a team belongs to the current org before any mutation touches it. */

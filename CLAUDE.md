@@ -43,6 +43,21 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   `requireCurrentOrganization()` in `src/lib/auth.ts` are how every org-scoped
   query resolves "the current org" — always go through those rather than
   reading a param.
+- Multi-organization login: one Auth0 identity can hold access to more than
+  one `Organization`, via an `OrganizationMembership` join table (per-org
+  role, distinct from `User.role` which is now just a legacy "home org"
+  attribute). `getCurrentOrganization()`/`requireCurrentOrganization()`
+  return `{ organization, role }` — resolved from an `activeOrgId` cookie for
+  anyone with 2+ memberships, with zero behaviour change for the common
+  single-membership case. `User.isPlatformSuperuser` (never settable from
+  any UI, toggled directly in the database) gives ConnectTheDots staff and
+  Carey implicit access to every org, including ones created later, logged
+  to `OrgAccessAudit` since it's the one access pattern with no per-row
+  membership backing it. Consultants/coaches get ordinary per-org
+  `OrganizationMembership` invites instead (`/admin/organization/members`).
+  The org switcher lives in the header (`src/components/OrganizationSwitcher.tsx`)
+  and only renders for 2+ memberships; `/select-organization` is the fallback
+  for a multi-org user with no resolvable active org yet.
 - Score ingestion (`src/app/admin/teams/[teamId]/scores/**`): manual entry per
   member plus a CSV upload wizard (map columns → preview every row → save).
   The parsing/validation rules live in `src/lib/scoreIngestion.ts` and

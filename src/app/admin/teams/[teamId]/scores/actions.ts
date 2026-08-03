@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AssessmentSource, MemberNotificationKind, type Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentUser } from "@/lib/auth";
+import { requireCurrentUser, requireCurrentOrganization } from "@/lib/auth";
 import { requireTeamInOrg, requireMemberInOrg } from "@/lib/orgScope";
 import { parseCsv } from "@/lib/csv";
 import { drainMemberNotifications } from "@/lib/memberNotifications";
@@ -123,10 +123,10 @@ function notificationsRequested(options: NotificationOptions): boolean {
  * proven against a real mailbox.
  */
 export async function sendQueuedNotifications(teamId: string) {
-  const user = await requireCurrentUser();
+  const { organization, role } = await requireCurrentOrganization();
   await requireTeamInOrg(teamId);
 
-  if (user.role !== "ADMIN") {
+  if (role !== "ADMIN") {
     redirect(
       `${scoresPath(teamId)}?error=${encodeURIComponent(
         "Only an organisation admin can send member notifications."
@@ -135,7 +135,7 @@ export async function sendQueuedNotifications(teamId: string) {
   }
 
   const summary = await drainMemberNotifications({
-    organizationId: user.organizationId,
+    organizationId: organization.id,
     teamId,
   });
 
@@ -170,6 +170,7 @@ const manualEntrySchema = z.object({
 
 export async function saveManualAssessment(memberId: string, formData: FormData) {
   const user = await requireCurrentUser();
+  const { organization, role } = await requireCurrentOrganization();
   const member = await requireMemberInOrg(memberId);
   const manualPath = `/admin/teams/${member.teamId}/members/${memberId}/scores`;
   const fail = (message: string): never =>
@@ -192,7 +193,7 @@ export async function saveManualAssessment(memberId: string, formData: FormData)
     notifyScoresReceived: formData.get("notifyScoresReceived") === "on",
     sendReportWhenReady: formData.get("sendReportWhenReady") === "on",
   };
-  if (notificationsRequested(options) && user.role !== "ADMIN") {
+  if (notificationsRequested(options) && role !== "ADMIN") {
     fail("Only an organisation admin can request member notifications.");
     return;
   }
@@ -225,7 +226,7 @@ export async function saveManualAssessment(memberId: string, formData: FormData)
 
     return applyNotificationRequests({
       tx,
-      organizationId: user.organizationId,
+      organizationId: organization.id,
       requestedById: user.id,
       options,
       targets: [{ memberId, email: memberRecord.email, assessmentId: assessment.id }],
@@ -309,9 +310,10 @@ export async function saveCsvAssessments(input: CsvImportInput): Promise<CsvImpo
 
   const { teamId, fileName, fileText, mapping, overrides, notifications } = parsedInput.data;
   const user = await requireCurrentUser();
+  const { organization, role } = await requireCurrentOrganization();
   await requireTeamInOrg(teamId);
 
-  if (notificationsRequested(notifications) && user.role !== "ADMIN") {
+  if (notificationsRequested(notifications) && role !== "ADMIN") {
     return { ok: false, error: "Only an organisation admin can request member notifications." };
   }
 
@@ -381,7 +383,7 @@ export async function saveCsvAssessments(input: CsvImportInput): Promise<CsvImpo
 
     return applyNotificationRequests({
       tx,
-      organizationId: user.organizationId,
+      organizationId: organization.id,
       requestedById: user.id,
       options: notifications,
       targets,

@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentUser } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 import { CsvUploadWizard } from "@/components/CsvUploadWizard";
 
 export default async function CsvUploadPage({ params }: { params: { teamId: string } }) {
-  const user = await requireCurrentUser();
+  const { organization, role } = await requireCurrentOrganization();
 
   const team = await prisma.team.findFirst({
-    where: { id: params.teamId, organizationId: user.organizationId },
+    where: { id: params.teamId, organizationId: organization.id },
     include: {
       members: { orderBy: { name: "asc" }, select: { id: true, name: true, email: true } },
     },
@@ -47,7 +47,7 @@ export default async function CsvUploadPage({ params }: { params: { teamId: stri
           teamId={team.id}
           teamName={team.name}
           members={team.members}
-          canRequestNotifications={user.role === "ADMIN"}
+          canRequestNotifications={role === "ADMIN"}
         />
       )}
     </div>

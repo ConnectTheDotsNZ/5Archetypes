@@ -11,7 +11,7 @@ export default async function EditMemberPage({
   params: { teamId: string; memberId: string };
   searchParams: { error?: string };
 }) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
 
   const member = await prisma.member.findFirst({
     where: { id: params.memberId, teamId: params.teamId, team: { organizationId: org.id } },

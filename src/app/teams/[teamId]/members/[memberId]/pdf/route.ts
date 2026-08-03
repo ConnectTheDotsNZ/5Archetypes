@@ -14,7 +14,7 @@ export async function GET(
   _request: Request,
   { params }: { params: { teamId: string; memberId: string } }
 ) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
 
   const model = await loadIndividualProfileModel({
     teamId: params.teamId,

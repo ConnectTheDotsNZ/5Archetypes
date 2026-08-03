@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentUser } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 import { ELEMENTS, type Element } from "@/lib/archetypes";
 import { SCORE_SCALES, SCORE_SCALE_LABELS } from "@/lib/scoreIngestion";
 import { AssessmentSourceBadge } from "@/components/AssessmentSourceBadge";
@@ -32,13 +32,13 @@ export default async function ManualScoreEntryPage({
   params: { teamId: string; memberId: string };
   searchParams: { error?: string };
 }) {
-  const user = await requireCurrentUser();
+  const { organization, role } = await requireCurrentOrganization();
 
   const member = await prisma.member.findFirst({
     where: {
       id: params.memberId,
       teamId: params.teamId,
-      team: { organizationId: user.organizationId },
+      team: { organizationId: organization.id },
     },
     include: {
       team: { select: { name: true } },
@@ -136,7 +136,7 @@ export default async function ManualScoreEntryPage({
           ))}
         </div>
 
-        {user.role === "ADMIN" && (
+        {role === "ADMIN" && (
           <fieldset className="rounded border border-blush bg-cream p-3 text-sm">
             <legend className="px-1 font-semibold text-ink">
               Tell {member.name.split(" ")[0]} (optional)
