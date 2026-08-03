@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getCurrentOrganization, getAvailableMemberships } from "@/lib/auth";
+import { OrganizationSwitcher } from "@/components/OrganizationSwitcher";
 
 export const metadata: Metadata = {
   title: "Five Archetypes Platform (dev scaffold)",
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
+  const memberships = user ? await getAvailableMemberships() : [];
+  const currentOrganization = user ? await getCurrentOrganization() : null;
 
   return (
     <html lang="en">
@@ -28,7 +31,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </Link>
               {user ? (
                 <>
-                  <span className="font-normal text-muted">{user.organization.name}</span>
+                  <Link href="/admin/organization/members" className="text-gold hover:underline">
+                    People
+                  </Link>
+                  <OrganizationSwitcher
+                    memberships={memberships}
+                    currentOrganizationId={currentOrganization?.organization.id ?? null}
+                  />
                   <a href="/api/auth/logout" className="text-fire hover:underline">
                     Log out
                   </a>

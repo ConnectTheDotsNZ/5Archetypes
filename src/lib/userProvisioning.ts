@@ -32,6 +32,9 @@ export async function ensureUserForSession(auth0User: Auth0User): Promise<Curren
     include: { organization: true },
   });
   if (existingByEmail) {
+    // Pre-provisioned by an admin invite (src/app/admin/organization/members):
+    // that action already created the OrganizationMembership row for their
+    // home org, so only auth0Sub needs backfilling here.
     return prisma.user.update({
       where: { id: existingByEmail.id },
       data: { auth0Sub: auth0User.sub },
@@ -43,7 +46,7 @@ export async function ensureUserForSession(auth0User: Auth0User): Promise<Curren
     const organization = await tx.organization.create({
       data: { name: organizationNameFor(auth0User) },
     });
-    return tx.user.create({
+    const user = await tx.user.create({
       data: {
         auth0Sub: auth0User.sub,
         email: auth0User.email!,
@@ -52,5 +55,9 @@ export async function ensureUserForSession(auth0User: Auth0User): Promise<Curren
       },
       include: { organization: true },
     });
+    await tx.organizationMembership.create({
+      data: { userId: user.id, organizationId: organization.id, role: "ADMIN" },
+    });
+    return user;
   });
 }

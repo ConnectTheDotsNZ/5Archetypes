@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireCurrentUser } from "@/lib/auth";
+import { requireCurrentOrganization } from "@/lib/auth";
 import { ELEMENTS } from "@/lib/archetypes";
 import { AssessmentSourceBadge } from "@/components/AssessmentSourceBadge";
 import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
@@ -19,10 +19,10 @@ export default async function TeamScoresPage({
   params: { teamId: string };
   searchParams: { error?: string; saved?: string };
 }) {
-  const user = await requireCurrentUser();
+  const { organization, role } = await requireCurrentOrganization();
 
   const team = await prisma.team.findFirst({
-    where: { id: params.teamId, organizationId: user.organizationId },
+    where: { id: params.teamId, organizationId: organization.id },
     include: {
       members: {
         orderBy: { createdAt: "asc" },
@@ -39,7 +39,7 @@ export default async function TeamScoresPage({
 
   // Queued member-facing email for this team, newest first.
   const notifications = await prisma.memberNotification.findMany({
-    where: { organizationId: user.organizationId, member: { teamId: team.id } },
+    where: { organizationId: organization.id, member: { teamId: team.id } },
     orderBy: { createdAt: "desc" },
     take: 20,
     include: { member: { select: { name: true } } },
@@ -188,7 +188,7 @@ export default async function TeamScoresPage({
                   : "Nothing queued right now."}
               </p>
             </div>
-            {user.role === "ADMIN" && pendingCount > 0 && (
+            {role === "ADMIN" && pendingCount > 0 && (
               <form action={sendForTeam}>
                 <ConfirmSubmitButton
                   confirmMessage={`Send ${pendingCount} email(s) to members of ${team.name}?`}

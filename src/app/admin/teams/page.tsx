@@ -8,7 +8,7 @@ export default async function AdminTeamsPage({
 }: {
   searchParams: { error?: string };
 }) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
 
   const teams = await prisma.team.findMany({
     where: { organizationId: org.id },

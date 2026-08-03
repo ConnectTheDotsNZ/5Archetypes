@@ -48,6 +48,15 @@ enum OrgRole {
   MANAGER
 }
 
+// Distinct from OrgRole (a legacy, user-level attribute — see User.role) even
+// though the values are identical today: this is a property of one
+// user-organization pairing, not of the user account itself. A consultant or
+// Carey can be ADMIN in one org and hold no role at all in another.
+enum MembershipRole {
+  ADMIN
+  MANAGER
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -58,6 +67,7 @@ model Organization {
   teams  Team[]
   reports GeneratedReport[]
   memberNotifications MemberNotification[]
+  memberships OrganizationMembership[]
 }
 
 model User {
@@ -66,12 +76,56 @@ model User {
   // Auth0's stable subject identifier for this user. Nullable so a MANAGER
   // can be pre-provisioned by email (invited) before their first login.
   auth0Sub       String?      @unique
+  // Legacy: a user's original/home org. Kept as the fallback "current org"
+  // for anyone with exactly one OrganizationMembership row (the common case),
+  // and as the org a brand-new signup's first row is created in. Do not use
+  // this to check "which orgs can this user access" — that's `memberships`.
   role           OrgRole      @default(ADMIN)
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+  // ConnectTheDots staff / Carey: implicit access to every organization,
+  // including ones created after this flag is set. Never settable from any
+  // app UI — toggled directly in the database for a small, named set of
+  // accounts. Prefer an explicit OrganizationMembership row for anyone whose
+  // access should be limited to specific orgs (consultants, coaches).
+  isPlatformSuperuser Boolean @default(false)
   createdAt      DateTime     @default(now())
 
   requestedNotifications MemberNotification[]
+  memberships    OrganizationMembership[]
+  invitedMemberships OrganizationMembership[] @relation("MembershipInvitedBy")
+  accessAudits   OrgAccessAudit[]
+}
+
+// One row per org a user can access, with the role they hold in that org.
+// Source of truth for "which orgs can this identity act on" once a user has
+// more than one; see src/lib/auth.ts for how `User.organizationId`/`role`
+// (single-org legacy fields) and this table reconcile.
+model OrganizationMembership {
+  id             String         @id @default(cuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id])
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  role           MembershipRole @default(ADMIN)
+  createdAt      DateTime       @default(now())
+  invitedById    String?
+  invitedBy      User?          @relation("MembershipInvitedBy", fields: [invitedById], references: [id])
+
+  @@unique([userId, organizationId])
+}
+
+// Written only when a platform-superuser's access to an org isn't backed by
+// an explicit OrganizationMembership row — i.e. the one access pattern with
+// no per-row business justification, on HR/people data. Routine same-org
+// membership access is not logged here.
+model OrgAccessAudit {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organizationId String
+  path           String?
+  createdAt      DateTime     @default(now())
 }
 
 model Team {

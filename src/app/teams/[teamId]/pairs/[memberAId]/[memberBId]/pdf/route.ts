@@ -12,7 +12,7 @@ export async function GET(
   _request: Request,
   { params }: { params: { teamId: string; memberAId: string; memberBId: string } }
 ) {
-  const org = await requireCurrentOrganization();
+  const { organization: org } = await requireCurrentOrganization();
 
   const model = await loadPairwiseReportModel({
     teamId: params.teamId,
