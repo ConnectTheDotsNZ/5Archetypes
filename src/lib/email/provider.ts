@@ -32,7 +32,7 @@ function requireEnv(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) {
     throw new EmailNotConfiguredError(
-      `${name} is not set — see .env.example for the email settings.`
+      `${name} is not set. See .env.example for the email settings.`
     );
   }
   return value;

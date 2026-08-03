@@ -121,7 +121,7 @@ export function CsvUploadWizard({
 
     const text = await file.text();
     if (text.length > MAX_CSV_CHARS) {
-      setFileError("That file is too large to import — export just this team's rows and retry.");
+      setFileError("That file is too large to import. Export just this team's rows and retry.");
       return;
     }
 
@@ -197,7 +197,7 @@ export function CsvUploadWizard({
   function columnLabel(index: number): string {
     const header = headerCells?.[index]?.trim();
     const sample = sampleRow?.[index]?.trim();
-    const base = header ? `Column ${index + 1} — ${header}` : `Column ${index + 1}`;
+    const base = header ? `Column ${index + 1}: ${header}` : `Column ${index + 1}`;
     return sample ? `${base} (e.g. ${sample})` : base;
   }
 
@@ -226,7 +226,7 @@ export function CsvUploadWizard({
             <p className="mt-1 text-sm text-muted">
               One row per person, with a column for their email and/or name and one for each of the
               five element scores. Column order, header names and any title rows above the headers
-              don&apos;t matter — you&apos;ll confirm all of that next.
+              don&apos;t matter. You&apos;ll confirm all of that next.
             </p>
           </div>
 
@@ -247,7 +247,7 @@ export function CsvUploadWizard({
             <p className="font-semibold text-ink">Two things to know</p>
             <ul className="mt-1 list-disc space-y-1 pl-5">
               <li>
-                Rows are matched to people already on <strong>{teamName}</strong> — by email first,
+                Rows are matched to people already on <strong>{teamName}</strong>, by email first,
                 falling back to name. Nobody is created automatically; you can assign an unmatched
                 row to the right person in the preview, or add them to the team first.
               </li>
@@ -292,7 +292,7 @@ export function CsvUploadWizard({
                   <option key={index} value={index + 1}>
                     Row {index + 1}
                     {row.some((cell) => cell.trim())
-                      ? ` — ${row
+                      ? `: ${row
                           .filter((cell) => cell.trim())
                           .slice(0, 4)
                           .join(", ")
@@ -355,7 +355,7 @@ export function CsvUploadWizard({
                     onChange={(event) => updateMapping(key, Number(event.target.value))}
                     className="w-full rounded border border-blush px-3 py-2 text-sm focus:border-gold focus:outline-none"
                   >
-                    <option value={UNMAPPED}>— not mapped —</option>
+                    <option value={UNMAPPED}>(not mapped)</option>
                     {Array.from({ length: columnCount }, (_, index) => (
                       <option key={index} value={index}>
                         {columnLabel(index)}
@@ -447,7 +447,7 @@ export function CsvUploadWizard({
                             )}
                           </>
                         ) : (
-                          <span className="text-muted">—</span>
+                          <span className="text-muted">(none)</span>
                         )}
                       </td>
                       <td className="p-2 align-top">
@@ -473,7 +473,7 @@ export function CsvUploadWizard({
                             }
                             className="w-40 rounded border border-blush px-2 py-1 text-xs focus:border-gold focus:outline-none"
                           >
-                            <option value="">— pick a person —</option>
+                            <option value="">(pick a person)</option>
                             {members.map((member) => (
                               <option key={member.id} value={member.id}>
                                 {member.name}
@@ -487,7 +487,7 @@ export function CsvUploadWizard({
                           {row.scores ? (
                             row.scores[element].toFixed(3)
                           ) : (
-                            <span className="text-fire">{row.cells[element].trim() || "—"}</span>
+                            <span className="text-fire">{row.cells[element].trim() || "(none)"}</span>
                           )}
                         </td>
                       ))}
@@ -538,7 +538,7 @@ export function CsvUploadWizard({
               </label>
               <p className="mt-2 text-xs text-muted">
                 Requests are recorded against each person now and sent once report generation and an
-                email provider are in place — nothing is emailed today.
+                email provider are in place. Nothing is emailed today.
                 {membersWithoutEmail > 0 && (
                   <>
                     {" "}
@@ -596,7 +596,7 @@ export function CsvUploadWizard({
 
           {preview.readyRows.length === 0 && (
             <p className="text-sm text-muted">
-              Nothing can be imported yet — assign the unmatched rows above, fix the values, or go
+              Nothing can be imported yet. Assign the unmatched rows above, fix the values, or go
               back and change the column mapping.
             </p>
           )}

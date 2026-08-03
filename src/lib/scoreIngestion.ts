@@ -272,7 +272,7 @@ export function describeMappingProblems(mapping: ColumnMapping): string[] {
   }
 
   if (mapping.email === UNMAPPED && mapping.name === UNMAPPED) {
-    problems.push("Choose an email column, a name column, or both — rows are matched on those.");
+    problems.push("Choose an email column, a name column, or both: rows are matched on those.");
   }
 
   if (!Number.isInteger(mapping.firstDataRow) || mapping.firstDataRow < 1) {
@@ -431,7 +431,7 @@ export function resolveRows({
         matchedBy = "NAME";
       } else if (matches.length > 1) {
         issues.push(
-          `More than one member on this team is named “${rawName}” — map an email column, or pick the right person below.`
+          `More than one member on this team is named “${rawName}”. Map an email column, or pick the right person below.`
         );
       }
     }
@@ -441,14 +441,14 @@ export function resolveRows({
       issues.push(
         identifier === ""
           ? "This row has no name or email to match on."
-          : `No member on this team matches “${identifier}” — pick the right person below, or add them to the team first.`
+          : `No member on this team matches “${identifier}”. Pick the right person below, or add them to the team first.`
       );
     }
 
     // Matched on something other than the email in the file — often a personal
     // address in the export vs a work address on the record. Worth showing.
     if (member && emailLookupFailed) {
-      warnings.push(`“${rawEmail}” isn’t on ${member.name}’s record — matched another way.`);
+      warnings.push(`“${rawEmail}” isn’t on ${member.name}’s record. Matched another way.`);
     }
 
     // A name that disagrees with the matched member is worth flagging without
@@ -467,7 +467,7 @@ export function resolveRows({
     if (member) {
       const firstClaim = claimedBy.get(member.id);
       if (firstClaim !== undefined) {
-        issues.push(`Duplicate — row ${firstClaim} already has scores for ${member.name}.`);
+        issues.push(`Duplicate: row ${firstClaim} already has scores for ${member.name}.`);
       } else if (issues.length === 0) {
         claimedBy.set(member.id, rowNumber);
       }
