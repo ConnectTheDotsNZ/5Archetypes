@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { loadDemoIndividualProfileModel } from "@/lib/reports/loadIndividualProfile";
-import { renderIndividualProfileHtml } from "@/lib/reports/renderReportHtml";
+import { renderIndividualProfileHtml, injectDemoDisclaimer } from "@/lib/reports/renderReportHtml";
 import { individualProfileFileName } from "@/lib/reports/individualProfile";
 import { PdfNotConfiguredError, getPdfRenderer } from "@/lib/pdf/renderer";
+import { DEMO_NARRATIVE_DISCLAIMER } from "@/lib/content/demoNarrative";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,7 +22,8 @@ export async function GET(_request: Request, { params }: { params: { memberId: s
 
   try {
     const renderer = await getPdfRenderer();
-    const pdf = await renderer.render(await renderIndividualProfileHtml(model));
+    const html = injectDemoDisclaimer(await renderIndividualProfileHtml(model), DEMO_NARRATIVE_DISCLAIMER);
+    const pdf = await renderer.render(html);
 
     return new NextResponse(pdf, {
       headers: {

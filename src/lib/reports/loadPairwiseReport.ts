@@ -6,7 +6,21 @@
 
 import { prisma } from "../prisma";
 import { getDemoMember } from "../sampleData";
+import { allPairKeys, type PairwiseContent, type PairKey } from "../content/pairwiseReport";
+import { buildDemoPairwiseContent, DEMO_PAIRWISE_FRAMING } from "../content/demoNarrative";
 import { buildPairwiseReport, type PairwiseReportModel } from "./pairwiseReport";
+
+/**
+ * Builds a full 15-key content map for one specific demo pair. Only the key
+ * matching this pair's actual archetypes is ever read by buildPairwiseReport,
+ * but the override parameter is typed as the full record, so the other 14
+ * entries exist purely to satisfy that shape.
+ */
+function demoContentLibraryFor(nameA: string, nameB: string): Record<PairKey, PairwiseContent> {
+  return Object.fromEntries(
+    allPairKeys().map((key) => [key, buildDemoPairwiseContent(key, nameA, nameB)])
+  ) as Record<PairKey, PairwiseContent>;
+}
 
 export async function loadPairwiseReportModel({
   teamId,
@@ -88,8 +102,10 @@ export function loadDemoPairwiseReportModel({
     subjectB: { name: b.name, roleTitle: b.roleTitle },
     scoresA: a.scores,
     scoresB: b.scores,
-    teamName: "Leadership Team (demo)",
-    organizationName: "Acme Legal (demo)",
+    teamName: "Legal & Admin Team",
+    organizationName: "LawFam",
     generatedAt,
+    contentLibrary: demoContentLibraryFor(a.name, b.name),
+    framing: DEMO_PAIRWISE_FRAMING,
   });
 }

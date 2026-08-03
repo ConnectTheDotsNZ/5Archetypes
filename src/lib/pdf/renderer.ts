@@ -1,15 +1,20 @@
 /**
  * PDF rendering seam.
  *
- * docs/BUILD_PLAN.md Section 7.2 calls for headless Chromium, but *where*
- * this runs is still open ("Vercel or AWS"), and that choice changes how
- * Chromium is obtained: a local/containerised deploy points at an installed
- * binary, while Vercel's serverless runtime needs a compiled Chromium layer
- * such as @sparticuz/chromium alongside puppeteer-core.
+ * docs/BUILD_PLAN.md Section 7.2 calls for headless Chromium. Two hosting
+ * shapes are supported, because MVP hosting (a temporary Vercel preview) and
+ * eventual hosting (a container on a connectthedots.co.nz subdomain, see
+ * docs/DEPLOYMENT.md) obtain Chromium differently:
  *
- * So callers ask for a `PdfRenderer` and never touch puppeteer directly.
- * Adding the serverless case later means one more branch in this file — the
- * same shape as the email provider seam in src/lib/email/provider.ts.
+ * - A container/VPS has Chromium installed on disk — `createChromiumRenderer`
+ *   points puppeteer-core at it directly.
+ * - Vercel's serverless runtime has no Chromium and can't apt-install one, so
+ *   `createServerlessRenderer` uses @sparticuz/chromium, a Chromium build
+ *   compiled to fit the deployment size limit, unpacked into /tmp at cold
+ *   start.
+ *
+ * Callers ask for a `PdfRenderer` and never touch puppeteer or the hosting
+ * detail directly.
  */
 
 export type PdfRenderer = {
@@ -114,12 +119,65 @@ async function createChromiumRenderer(): Promise<PdfRenderer> {
   };
 }
 
+/**
+ * Serverless Chromium via @sparticuz/chromium, for Vercel (or any AWS-Lambda-
+ * shaped runtime). The package ships a compressed Chromium build and unpacks
+ * it into /tmp on cold start — puppeteer-core points at that path instead of
+ * an OS package.
+ */
+async function createServerlessRenderer(): Promise<PdfRenderer> {
+  const [chromium, puppeteer] = await Promise.all([
+    import("@sparticuz/chromium"),
+    import("puppeteer-core"),
+  ]);
+
+  return {
+    name: "serverless-chromium",
+    async render(html) {
+      const executablePath = await chromium.default.executablePath();
+      const browser = await puppeteer.launch({
+        executablePath,
+        headless: true,
+        args: chromium.default.args,
+      });
+
+      try {
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "load" });
+        const pdf = await page.pdf({
+          format: "a4",
+          printBackground: true,
+          preferCSSPageSize: true,
+        });
+        return Buffer.from(pdf);
+      } finally {
+        await browser.close();
+      }
+    },
+  };
+}
+
+/**
+ * `PDF_RENDERER` picks the implementation explicitly. Left unset, Vercel's own
+ * `VERCEL=1` env var (present in every Vercel deployment, no configuration
+ * needed) picks the serverless renderer automatically — so a Vercel preview
+ * gets working PDF export with zero PDF-specific setup, and a container
+ * deploy that sets nothing gets the plain Chromium path.
+ */
 export async function getPdfRenderer(): Promise<PdfRenderer> {
-  const configured = (process.env.PDF_RENDERER ?? "chromium").trim().toLowerCase();
+  const configured = (
+    process.env.PDF_RENDERER ??
+    (process.env.VERCEL ? "serverless-chromium" : "chromium")
+  )
+    .trim()
+    .toLowerCase();
 
   switch (configured) {
     case "chromium":
       return createChromiumRenderer();
+    case "serverless-chromium":
+    case "vercel":
+      return createServerlessRenderer();
     default:
       throw new PdfNotConfiguredError(`Unknown PDF_RENDERER “${configured}”.`);
   }

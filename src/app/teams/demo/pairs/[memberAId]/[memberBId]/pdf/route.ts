@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { loadDemoPairwiseReportModel } from "@/lib/reports/loadPairwiseReport";
-import { renderPairwiseReportHtml } from "@/lib/reports/renderReportHtml";
+import { renderPairwiseReportHtml, injectDemoDisclaimer } from "@/lib/reports/renderReportHtml";
 import { pairwiseReportFileName } from "@/lib/reports/pairwiseReport";
 import { PdfNotConfiguredError, getPdfRenderer } from "@/lib/pdf/renderer";
+import { DEMO_NARRATIVE_DISCLAIMER } from "@/lib/content/demoNarrative";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,7 +25,8 @@ export async function GET(
 
   try {
     const renderer = await getPdfRenderer();
-    const pdf = await renderer.render(await renderPairwiseReportHtml(model));
+    const html = injectDemoDisclaimer(await renderPairwiseReportHtml(model), DEMO_NARRATIVE_DISCLAIMER);
+    const pdf = await renderer.render(html);
 
     return new NextResponse(pdf, {
       headers: {
