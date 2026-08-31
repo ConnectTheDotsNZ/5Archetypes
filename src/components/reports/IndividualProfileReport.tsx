@@ -228,6 +228,22 @@ export function IndividualProfileReport({
       </section>
 
       <section className="fa-section">
+        <h2>Your sequencing architecture</h2>
+        <p className="fa-sequence-chain">{sections.map((section) => section.element).join(" → ")}</p>
+        <ContentBlockView label="How your sequence works" block={framing.sequencingArchitecture} />
+        <div className="fa-field">
+          <div className="fa-field-label">Where this matters most for you</div>
+          <p>
+            {sections[3].sequencingRole} ({sections[3].element}) and {sections[4].sequencingRole} (
+            {sections[4].element}) both trail your sequence — the two functions least likely to weigh
+            in before something else has already been decided. That doesn&apos;t mean either quality
+            is missing; it means both arrive after the rest of the profile has already engaged, so
+            they&apos;re easiest to access with a deliberate pause rather than by default.
+          </p>
+        </div>
+      </section>
+
+      <section className="fa-section">
         <ContentBlockView label="Where to go next" block={framing.closing} />
       </section>
 

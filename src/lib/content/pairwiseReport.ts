@@ -156,6 +156,15 @@ export const PAIRWISE_FRAMING = {
   },
   introduction: pending("opening framing for a workplace pair"),
   fieldExplainer: pending("what the Field is, for a workplace audience"),
+  /**
+   * Generic (not per-pair) explainer for the Sequencing comparison section:
+   * why rank position, not just raw score, changes how two people's shared
+   * elements actually show up between them. See buildPairwiseReport's
+   * `comparisons[].rankA/rankB/moreForwardFor` and `biggestSequenceGap`.
+   */
+  sequencingComparisonExplainer: pending(
+    "what a sequencing comparison means and why rank position matters, not just score"
+  ),
   closing: pending("closing guidance / next steps for a pair"),
 };
 

@@ -292,6 +292,11 @@ export const DEMO_INDIVIDUAL_FRAMING = {
   // element-based sequencing mapping itself as unconfirmed with Carey — so
   // this stays a placeholder even in the demo.
   sequencing: pending("explanation of the sequencing roles"),
+  sequencingArchitecture: block([
+    "Your five elements don't just have a strength — they have a position. Read top to bottom, your ranked scores form a chain: the element you lead with, down to the one you reach for last. That order is your sequencing architecture, and it shapes how each element actually shows up for you day to day, separately from how strong it is in absolute terms.",
+    "An element near the front of your chain is close to instinctive — it's part of your first response to a situation, before you've had to think about it. An element further back doesn't disappear; it just arrives later, after the elements ahead of it have already shaped how you've engaged. That's not a weakness in the trailing element itself — it's a statement about when it gets a turn.",
+    "The practical edge case worth watching for is when two functions both trail your sequence at once. A decision or a direction can go out fully formed on the elements that lead your chain, while whatever the trailing elements would have added — a consequence check, a threshold check, a beat of reflection — hasn't had a chance to weigh in yet, simply because it processes last.",
+  ]),
   closing: block([
     "None of this is a verdict. It's a description of tendencies under specific conditions, useful for noticing patterns sooner and choosing, deliberately, how to respond to them.",
   ]),
@@ -668,6 +673,10 @@ export const DEMO_PAIRWISE_FRAMING = {
   // Distortions) is not in the book at all, so there's no source material to
   // draft this from — stays a placeholder even in the demo.
   fieldExplainer: pending("what the Field is, for a workplace audience"),
+  sequencingComparisonExplainer: block([
+    "Score alone doesn't tell you which of two people's shared elements is more in play — position does. Someone can score higher on Metal in absolute terms and still have it trail their own sequence, while the other person's lower-scoring Metal sits near the front of theirs. When that happens, it's the second person's Metal that's more likely to actually be in the room early, doing quality-gate work before things are locked in.",
+    "That's what a sequencing comparison looks at: not just who scores higher on an element, but whose version of it arrives earlier in their own processing — and where the two chains agree or pull apart. The sharpest useful signal is usually the element with the biggest rank gap between the two of you: whoever has it further forward is the one more likely to be supplying that function for the pair, whether or not either of you has said so out loud.",
+  ]),
   closing: block([
     "Either person can shift this dynamic without waiting for the other to go first. Noticing the loop earlier is most of the work.",
   ]),

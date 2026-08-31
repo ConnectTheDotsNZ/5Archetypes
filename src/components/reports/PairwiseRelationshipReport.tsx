@@ -143,6 +143,41 @@ export function PairwiseRelationshipReport({
       </section>
 
       <section className="fa-section">
+        <h2>Sequencing comparison</h2>
+        <p className="fa-sequence-chain">
+          {a.name}: {a.ranked.map((r) => r.element).join(" → ")}
+        </p>
+        <p className="fa-sequence-chain">
+          {b.name}: {b.ranked.map((r) => r.element).join(" → ")}
+        </p>
+        <ContentBlockView
+          label="What a sequencing comparison shows"
+          block={framing.sequencingComparisonExplainer}
+        />
+        <div className="fa-field">
+          <div className="fa-field-label">Shared lead</div>
+          <p>
+            {model.sharedStrengths.length > 0
+              ? `${a.name} and ${b.name} both carry ${model.sharedStrengths.join(
+                  " and "
+                )} among their top two elements, so those functions tend to be available to the pairing early and on both sides.`
+              : `${a.name} and ${b.name} don't share either of their top two elements — their sequences lead in different directions, so the functions each of them reaches for first are likely to come from different places.`}
+          </p>
+        </div>
+        <div className="fa-field">
+          <div className="fa-field-label">Sharpest sequencing contrast</div>
+          <p>
+            {model.biggestSequenceGap.element} is the widest gap in rank position between you: it's{" "}
+            {a.name}&apos;s {model.biggestSequenceGap.labelA} (rank {model.biggestSequenceGap.rankA})
+            but {b.name}&apos;s {model.biggestSequenceGap.labelB} (rank{" "}
+            {model.biggestSequenceGap.rankB}). Whichever side leads there, that person&apos;s{" "}
+            {model.biggestSequenceGap.sequencingRole.toLowerCase()} function is arriving earlier and
+            more instinctively in this pairing — the other will need to draw on it more deliberately.
+          </p>
+        </div>
+      </section>
+
+      <section className="fa-section">
         <h2>How to read this</h2>
         <p>{framing.structural.howToRead}</p>
         <p>{framing.structural.fieldNote}</p>
@@ -159,6 +194,8 @@ export function PairwiseRelationshipReport({
               <th className="fa-num">{a.name}</th>
               <th className="fa-num">{b.name}</th>
               <th>Gap</th>
+              <th>{a.name}&apos;s rank</th>
+              <th>{b.name}&apos;s rank</th>
               <th>Sequencing role</th>
             </tr>
           </thead>
@@ -171,6 +208,8 @@ export function PairwiseRelationshipReport({
                 <td>
                   <DeltaCell comparison={comparison} nameA={a.name} nameB={b.name} />
                 </td>
+                <td>{comparison.labelA}</td>
+                <td>{comparison.labelB}</td>
                 <td>{comparison.sequencingRole}</td>
               </tr>
             ))}

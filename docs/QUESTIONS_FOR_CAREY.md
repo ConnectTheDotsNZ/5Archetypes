@@ -212,9 +212,34 @@ comment saying it's an assumption. It's a one-table change if it's wrong — but
 only if we fix it before reports go out, because the sequencing table appears
 in every individual profile.
 
+**Updated 2026-09-01 — a third reading, from more of Carey's own examples.**
+Glenn supplied three more of Carey's real personalised guides (not the book,
+not in this repo). Read across all of them, the pattern looks like neither
+pure "element-based" nor pure "rank-based" as framed above — it's both, at
+different layers:
+
+- The **role label** is element-based and matches what's already coded here
+  exactly (Water is always "model downstream consequences," Metal is always
+  "specify thresholds/quality gate," etc.) — consistent across every person
+  in every guide, regardless of their own rank order.
+- But how **instinctively** that role actually shows up for a given person
+  depends on where that element sits in *their own* sequence — early
+  (near-automatic, front-of-processing) vs. trailing (only available with
+  deliberate effort, arriving after other elements have already shaped the
+  response). And when someone's two lowest elements are a consequence-type
+  and a quality-type function together, the guides call that out
+  specifically: decisions can go out fully formed without either check.
+
+We've built this reading into the demo report (a new "Your sequencing
+architecture" section on the individual profile, and a "Sequencing
+comparison" section on the pairwise report — both computed from rank
+position, not authored per-person). **This is inferred from her examples,
+not confirmed by her directly** — please react to it plainly: is that right,
+or does she think about "leading vs. trailing" differently?
+
 **Questions:**
 
-1. Which is it — element or rank position?
+1. Which is it — element, rank position, or the both-at-once reading above?
 2. If element-based: are those five labels the final wording? They currently
    appear verbatim in the reports.
 3. If rank-based: what are the five role labels by position (1st through 5th)?

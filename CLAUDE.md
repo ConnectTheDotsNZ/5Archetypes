@@ -152,6 +152,27 @@ were confirmed:
    coded as element-based (Wood is always "Activate," etc.). Might actually
    be rank-position-based. One-table change if Carey corrects it — don't
    let it spread across the codebase before it's confirmed.
+   **Update (2026-09-01, from real personalised guides Carey has already
+   authored for named individuals, supplied by Glenn — not the book, not
+   in this repo):** those guides are consistent with a third reading that
+   isn't quite either option above — the role label itself IS element-based
+   (matches `SEQUENCING_ROLE` in this file exactly, e.g. Water is always
+   "model downstream consequences"), but how strongly/instinctively that
+   role shows up for a given person depends on where that element sits in
+   *their own* rank order, not on the element alone. An element near the
+   front of someone's personal chain reads as instinctive/front-of-
+   processing; one near the back reads as available only with deliberate
+   effort — and when a person's two lowest-ranked elements are a
+   consequence-function and a quality-function together, decisions can go
+   out without either check. Implemented as `sequencingArchitecture`
+   (individual profile) and `sequencingComparisonExplainer` +
+   `biggestSequenceGap` (pairwise) — see `src/lib/reports/
+   individualProfile.ts`, `src/lib/reports/pairwiseReport.ts`,
+   `src/lib/content/demoNarrative.ts`. This is still inferred from Carey's
+   own authored examples, not a direct confirmation from her — treat as
+   strong evidence, not settled, until she confirms it directly (Glenn is
+   meeting her 2026-09-02 and this is on the list — see
+   docs/QUESTIONS_FOR_CAREY.md Part B.2).
 3. **IP/licensing scope**: don't reproduce verbatim text from Carey's book
    (assessment item wording, needs lists, Ayurvedic charts) anywhere in
    customer-facing copy or seed/demo data until licensing is confirmed.

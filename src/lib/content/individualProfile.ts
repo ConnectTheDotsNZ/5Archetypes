@@ -95,6 +95,17 @@ export const INDIVIDUAL_PROFILE_FRAMING = {
   primaryArchetype: pending("what it means to lead with your primary archetype"),
   lowestArchetype: pending("how to work with your lowest element"),
   sequencing: pending("explanation of the sequencing roles"),
+  /**
+   * Generic (not per-person) explainer for the new "Your sequencing
+   * architecture" section: why rank position — not just which element —
+   * determines whether a function is instinctive/early or deliberate/late
+   * for this person. Distinct from `sequencing` above, which explains what
+   * each role label (Activate, Express, ...) means; this explains why WHERE
+   * that role sits in the person's own chain changes how readily it fires.
+   */
+  sequencingArchitecture: pending(
+    "what a personal sequencing chain is and why rank position changes how a function shows up"
+  ),
   closing: pending("closing guidance / next steps"),
 } satisfies Record<string, ContentBlock | Record<string, string>>;
 

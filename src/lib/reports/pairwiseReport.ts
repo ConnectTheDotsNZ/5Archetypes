@@ -53,6 +53,23 @@ export type ElementComparison = {
   /** Which person sits higher, or null when the two are equal to 3dp. */
   higher: "A" | "B" | null;
   sequencingRole: string;
+  /**
+   * This element's rank position (1=Primary..5=Lowest) within each person's
+   * OWN profile — independent of the raw score comparison above. A person
+   * can score higher on an element in absolute terms while it still sits
+   * further back in their own sequence than it does for the other person;
+   * rank position, not raw score, is what determines how "architecturally
+   * active" (instinctive/early) vs. deliberate (trailing/late) that
+   * function is for each of them.
+   */
+  rankA: RankedElement["rank"];
+  rankB: RankedElement["rank"];
+  labelA: RankedElement["label"];
+  labelB: RankedElement["label"];
+  /** Whose sequence processes this element earlier, by rank position. */
+  moreForwardFor: "A" | "B" | "tie";
+  /** |rankA - rankB| — how far apart the two sequences are on this element. */
+  rankGap: number;
 };
 
 export type PairwiseReportModel = {
@@ -70,6 +87,13 @@ export type PairwiseReportModel = {
   comparisons: ElementComparison[];
   /** Elements where the two are furthest apart, largest gap first. */
   widestGaps: ElementComparison[];
+  /**
+   * The element whose rank position differs most between the two people
+   * (e.g. someone's Third vs. the other's Lowest) — the sharpest contrast
+   * in which functions each person reaches for instinctively vs. late.
+   * Ties broken by the earlier-declared element in ELEMENTS order.
+   */
+  biggestSequenceGap: ElementComparison;
   /** Elements both people rank in their top two — shared strengths. */
   sharedStrengths: Element[];
   /** Elements both people rank last — a shared blind spot. */
@@ -150,6 +174,10 @@ export function buildPairwiseReport({
 
   const comparisons: ElementComparison[] = ELEMENTS.map((element) => {
     const delta = relationship.deltas[element];
+    const rankedEntryA = a.ranked.find((r) => r.element === element)!;
+    const rankedEntryB = b.ranked.find((r) => r.element === element)!;
+    const rankA = rankedEntryA.rank;
+    const rankB = rankedEntryB.rank;
     return {
       element,
       scoreA: scoresA[element],
@@ -157,12 +185,20 @@ export function buildPairwiseReport({
       delta,
       higher: delta === 0 ? null : delta > 0 ? "A" : "B",
       sequencingRole: SEQUENCING_ROLE[element],
+      rankA,
+      rankB,
+      labelA: rankedEntryA.label,
+      labelB: rankedEntryB.label,
+      moreForwardFor: rankA === rankB ? "tie" : rankA < rankB ? "A" : "B",
+      rankGap: Math.abs(rankA - rankB),
     };
   });
 
   const widestGaps = [...comparisons]
     .sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta))
     .slice(0, 2);
+
+  const biggestSequenceGap = [...comparisons].sort((x, y) => y.rankGap - x.rankGap)[0];
 
   const topTwo = (person: PairPerson) => person.ranked.slice(0, 2).map((r) => r.element);
   const sharedStrengths = topTwo(a).filter((element) => topTwo(b).includes(element));
@@ -212,6 +248,7 @@ export function buildPairwiseReport({
     bridgeElement: relationship.bridgeElement,
     comparisons,
     widestGaps,
+    biggestSequenceGap,
     sharedStrengths,
     sharedBlindSpots,
     sections,
