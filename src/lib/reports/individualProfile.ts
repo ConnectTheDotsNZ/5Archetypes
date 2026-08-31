@@ -22,8 +22,10 @@ import {
 import {
   INDIVIDUAL_PROFILE_CONTENT,
   INDIVIDUAL_PROFILE_FRAMING,
+  tierForRankLabel,
   type ContentBlock,
   type IndividualProfileContent,
+  type IndividualProfileContentLibrary,
 } from "../content/individualProfile";
 
 export type ReportSubject = {
@@ -78,11 +80,9 @@ function challengersOf(element: Element): Element[] {
   return SHENG_CYCLE.filter((other) => isKeChallenger(element, other));
 }
 
-function toSection(
-  ranked: RankedElement,
-  contentLibrary: Record<Element, IndividualProfileContent>
-): ProfileSection {
+function toSection(ranked: RankedElement, contentLibrary: IndividualProfileContentLibrary): ProfileSection {
   const archetype = ARCHETYPES[ranked.element];
+  const tier = tierForRankLabel(ranked.label);
   return {
     element: ranked.element,
     rank: ranked.rank,
@@ -92,7 +92,7 @@ function toSection(
     essence: archetype.essence,
     stressState: archetype.stressState,
     sequencingRole: SEQUENCING_ROLE[ranked.element],
-    content: contentLibrary[ranked.element],
+    content: contentLibrary[ranked.element][tier],
   };
 }
 
@@ -114,7 +114,7 @@ export function buildIndividualProfileReport({
    * demo loader (src/lib/content/demoNarrative.ts). Real org reports always
    * use the default, so they never see anything Carey hasn't approved.
    */
-  contentLibrary?: Record<Element, IndividualProfileContent>;
+  contentLibrary?: IndividualProfileContentLibrary;
   framing?: typeof INDIVIDUAL_PROFILE_FRAMING;
 }): IndividualProfileReportModel {
   const ranked = rankProfile(scores);

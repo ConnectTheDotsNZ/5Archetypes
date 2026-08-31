@@ -91,6 +91,27 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   `[PLACEHOLDER: pending Carey's content library]` in the report. Approving
   copy means changing data in that file, not the template. Do not fill those
   blocks in with invented psychological content or book text.
+- **Individual profile narrative is keyed by rank tier, not just element.**
+  Each of the five "Profile in rank order" cards used to always render the
+  same per-element copy regardless of whether that element was the person's
+  Primary or their Lowest — so a Lowest-element card read exactly as
+  strongly as the Primary card, describing traits as if they were the
+  person's default stress reaction when in fact that element is the one
+  they reach for least. Fixed 2026-08-31 (Glenn's feedback, using Brooke
+  Ashworth — Primary Earth, Lowest Water — as the concrete example): the
+  content library is now `Record<Element, Record<ContentIntensityTier,
+  IndividualProfileContent>>` (`IndividualProfileContentLibrary` in
+  `src/lib/content/individualProfile.ts`), where `ContentIntensityTier` is
+  `"dominant" | "moderate" | "minor"`, mapped from `RankedElement.label` via
+  `tierForRankLabel()`: Primary/Secondary → dominant (full-strength, "you
+  tend to..."), Third → moderate (situational, hedged), Fourth/Lowest →
+  minor (explicitly framed as rare/uncharacteristic — "this isn't how you
+  typically react"). `src/lib/reports/individualProfile.ts`'s `toSection()`
+  resolves the tier per section before looking up content. Applies to both
+  the demo content (`src/lib/content/demoNarrative.ts`, fully authored for
+  all 5 elements × 3 tiers) and the real, still-placeholder library — so
+  when Carey's content is eventually authored, it needs a dominant/moderate/
+  minor variant per element, not just one.
 - Report styles are plain CSS in `src/components/reports/reportStyles.ts`, not
   Tailwind — Chromium renders the PDF from `renderToStaticMarkup` output with
   no Tailwind build attached, so one inlined stylesheet is what keeps PDF and
