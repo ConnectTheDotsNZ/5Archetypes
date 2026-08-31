@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTeamWithScores } from "@/lib/teamData";
-import { rankProfile, isShengNeighbor, isKeChallenger } from "@/lib/archetypes";
+import { rankProfile } from "@/lib/archetypes";
 import { ArchetypeBadge } from "@/components/ArchetypeBadge";
 import { ScoreBar } from "@/components/ScoreBar";
 import { requireCurrentOrganization } from "@/lib/auth";
@@ -17,7 +17,9 @@ export default async function TeamPage({ params }: { params: { teamId: string } 
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-3xl font-bold">{team.name}: heatmap</h1>
-        <p className="text-muted">Click any two members for a pairwise report.</p>
+        <p className="text-muted">
+          Open a member&apos;s profile to see their pairwise flags with the rest of the team.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -39,51 +41,6 @@ export default async function TeamPage({ params }: { params: { teamId: string } 
             </div>
           </Link>
         ))}
-      </div>
-
-      <div>
-        <h2 className="font-display text-xl font-bold">Pairwise flags</h2>
-        <p className="mb-3 text-sm text-muted">
-          Natural-ally pairs and natural-challenger pairs (natural button-pushers), based
-          on each person&apos;s Primary element.
-        </p>
-        <table className="w-full border-collapse overflow-hidden rounded-lg border border-blush bg-white text-sm">
-          <thead>
-            <tr className="bg-blush text-left">
-              <th className="p-2">Pair</th>
-              <th className="p-2">Relationship</th>
-              <th className="p-2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {withPrimary.flatMap((a, i) =>
-              withPrimary.slice(i + 1).map((b) => {
-                const neighbor = isShengNeighbor(a.primary, b.primary);
-                const challenger = isKeChallenger(a.primary, b.primary);
-                return (
-                  <tr key={`${a.id}-${b.id}`} className="border-t border-blush">
-                    <td className="p-2">
-                      {a.name} &amp; {b.name}
-                    </td>
-                    <td className="p-2">
-                      {neighbor && <span className="text-wood">Natural allies</span>}
-                      {challenger && <span className="text-fire">Natural challengers: button-pushers</span>}
-                      {!neighbor && !challenger && <span className="text-muted">No direct cycle link</span>}
-                    </td>
-                    <td className="p-2 text-right">
-                      <Link
-                        className="font-semibold text-gold hover:underline"
-                        href={`/teams/${team.id}/pairs/${a.id}/${b.id}`}
-                      >
-                        View report →
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

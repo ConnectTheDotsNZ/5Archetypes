@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { loadDemoIndividualProfileModel } from "@/lib/reports/loadIndividualProfile";
 import { IndividualProfileReport } from "@/components/reports/IndividualProfileReport";
 import { DEMO_NARRATIVE_DISCLAIMER } from "@/lib/content/demoNarrative";
+import { demoTeam } from "@/lib/sampleData";
+import { rankProfile } from "@/lib/archetypes";
+import { PairwiseFlagsSection } from "@/components/PairwiseFlagsSection";
 
 export default function DemoMemberProfilePage({ params }: { params: { memberId: string } }) {
   const model = loadDemoIndividualProfileModel({
@@ -10,6 +13,13 @@ export default function DemoMemberProfilePage({ params }: { params: { memberId: 
     generatedAt: new Date(),
   });
   if (!model) return notFound();
+
+  const teammates = demoTeam.map((m) => ({
+    id: m.id,
+    name: m.name,
+    primary: rankProfile(m.scores)[0].element,
+  }));
+  const primary = teammates.find((t) => t.id === params.memberId)!.primary;
 
   return (
     <div className="space-y-6">
@@ -31,6 +41,14 @@ export default function DemoMemberProfilePage({ params }: { params: { memberId: 
 
       {/* Same component the PDF renders, so this page is a true preview. */}
       <IndividualProfileReport model={model} />
+
+      <PairwiseFlagsSection
+        memberId={params.memberId}
+        memberName={model.subject.name}
+        primary={primary}
+        teammates={teammates}
+        pairsBasePath="/teams/demo/pairs"
+      />
     </div>
   );
 }
