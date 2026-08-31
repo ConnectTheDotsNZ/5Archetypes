@@ -35,18 +35,32 @@ for every Wood-led and Earth-led pair of colleagues on every team, forever.
 That's what makes it a product rather than a consulting deliverable, and it's
 why the writing is a fixed, finite job rather than an endless one.
 
-Concretely: **161 blocks of copy** in total. Once they exist, every report the
+Concretely: **191 blocks of copy** in total. Once they exist, every report the
 platform will ever produce is fully written.
 
-### A.2 Individual Archetype Profile — 20 blocks
+### A.2 Individual Archetype Profile — 50 blocks
 
-Per element (Wood, Fire, Earth, Metal, Water) — **15 blocks**:
+**Updated 2026-08-31.** The report used to show one card per element with the
+same copy no matter where that element ranked for the person — so someone's
+*Lowest* element read exactly as dominant as their *Primary*, which read as
+inaccurate (a real example from the demo data: a Primary-Earth, Lowest-Water
+person's Water card described withdrawal-under-stress as if that were her
+normal reaction, when Water is the lens she draws on least). Fixed by
+splitting each element's copy into three **intensity tiers** keyed off rank:
+
+| Tier | Ranks | Voice |
+|---|---|---|
+| `dominant` | Primary, Secondary | Full-strength, direct — "you tend to..." |
+| `moderate` | Third | Situational — shows up sometimes, not the default |
+| `minor` | Fourth, Lowest | Explicitly rare/uncharacteristic — "this isn't how you typically react" |
+
+Per element (Wood, Fire, Earth, Metal, Water) × per tier — **45 blocks**:
 
 | Block | What it is | Appears |
 |---|---|---|
-| `needs` | What this archetype needs to stay at its best | In that element's card, for all five elements |
-| `stressPatterns` | How it shows up under stress | Same card |
-| `selfCare` | Self-care / regulation guidance | Same card |
+| `needs` | What this archetype needs to stay at its best, at this intensity | In that element's card, for all five elements × three tiers |
+| `stressPatterns` | How it shows up under stress, at this intensity | Same card |
+| `selfCare` | Self-care / regulation guidance, at this intensity | Same card |
 
 Report-level framing — **5 blocks**:
 
@@ -97,9 +111,9 @@ for a workplace audience), `closing`.
 1. **Does any of this already exist in a form we can use?** The Earth/Wood
    Fields report and the individual profiles suggest a lot of it is written
    somewhere. If so, the job may be closer to extraction and approval than
-   authoring from scratch. Which of the 161 blocks are already drafted?
+   authoring from scratch. Which of the 191 blocks are already drafted?
 2. **What's the natural authoring order?** Our suggestion: the five
-   individual-profile elements first (15 blocks — it makes one whole report
+   individual-profile elements first (45 blocks — it makes one whole report
    complete and demonstrable), then the Fields layer (33 blocks, mostly
    per-element and reusable), then the 105 pair-section blocks. Does that
    match how Carey would rather work?
@@ -122,6 +136,16 @@ for a workplace audience), `closing`.
 8. **What is the delivery format?** A spreadsheet with one row per block
    (pair key / block name / body) is easiest for us to ingest correctly. A
    document works too, but the block boundaries need to be unambiguous.
+9. **Does the dominant/moderate/minor split above match how she'd actually
+   describe it?** We've drafted example wording for the demo team (not
+   Carey's, not for approval — see `src/lib/content/demoNarrative.ts`) to
+   show the shape: an element ranked Third reads as situational rather than
+   a constant trait, and an element ranked Fourth or Lowest is framed
+   explicitly as rare/uncharacteristic rather than a quieter version of the
+   same behaviour. Is that distinction right, or does she think about
+   lower-ranked elements differently (e.g. "blind spot" vs. "rarely
+   surfaces" vs. "actively suppressed")? Worth showing her the demo report
+   for a real reaction before she starts writing 45 blocks instead of 15.
 
 ---
 
