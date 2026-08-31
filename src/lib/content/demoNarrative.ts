@@ -26,7 +26,12 @@
  */
 
 import type { Element } from "../archetypes";
-import type { IndividualProfileContent } from "./individualProfile";
+import {
+  INTENSITY_TIERS,
+  type ContentIntensityTier,
+  type IndividualProfileContent,
+  type IndividualProfileContentLibrary,
+} from "./individualProfile";
 import type { PairwiseContent, PairKey } from "./pairwiseReport";
 import { pending } from "./blocks";
 
@@ -48,77 +53,205 @@ function block(paragraphs: string[]) {
 
 type IndividualTemplate = (name: string) => IndividualProfileContent;
 
-const INDIVIDUAL_TEMPLATES: Record<Element, IndividualTemplate> = {
-  Wood: (name) => ({
-    needs: block([
-      `${name} is steadied by having room to act — a real decision to make, a clear target to move toward, and enough autonomy to choose their own next step rather than wait on someone else's timetable. They do their best work when there is genuine forward motion, whether that's a project, a debate, or a challenge worth taking on, and when the people around them treat their drive as an asset rather than something to be managed.`,
-      `What unsettles ${name} usually isn't conflict itself. It's friction with no clear direction, or being asked to slow down without being told why.`,
-    ]),
-    stressPatterns: block([
-      `Under stress, ${name}'s impatience tends to compress into force: quicker to frustration when something is moving slower than it should, more likely to read a disagreement as an obstacle than as input, and prone to push a plan forward without checking whether everyone else is still on board.`,
-      `Under sustained pressure, ${name} can start treating other people's caution as a challenge to their competence, when it usually isn't one.`,
-    ]),
-    selfCare: block([
-      `The fastest way back to balance for ${name}, in the moment, is physical rather than verbal — movement discharges the charge that talking it through usually can't touch yet.`,
-      `Once the edge is off, the more durable fix is a regular, deliberate pause: a standing check-in, or simply asking "what's the next right step" out loud instead of just moving, so their forward motion doesn't outrun everyone else's ability to keep up.`,
-    ]),
-  }),
-  Fire: (name) => ({
-    needs: block([
-      `${name} is steadied by warmth and things to look forward to — genuine two-way connection, room for playfulness, and permission to feel and express emotion openly rather than keep it contained. They do their best work in an environment charged with possibility and real human contact, where enthusiasm is met rather than quietly dampened.`,
-      `What unsettles ${name} isn't seriousness itself. It's isolation, being overlooked, or having their optimism read as naivety.`,
-    ]),
-    stressPatterns: block([
-      `Under stress, ${name} tends to scatter: harder to focus or hold on to details, quicker to swing between moods, and prone to over-commit in the hope that saying yes keeps the good feeling going.`,
-      `Sustained pressure can tip into a restlessness or anxiety that looks, from the outside, more like distraction than distress.`,
-    ]),
-    selfCare: block([
-      `The fastest way back to balance for ${name} in the moment is genuine human contact — being heard, reassured, and reminded that people still have their back.`,
-      `Once that initial wave passes, the more durable fix is building in real rest and unstructured downtime, so their enthusiasm has room to recover instead of running at full charge indefinitely.`,
-    ]),
-  }),
-  Earth: (name) => ({
-    needs: block([
-      `${name} is steadied by belonging and being genuinely needed — a settled place in the group, regular contact, and the sense that their care for others is actually landing rather than going unnoticed. They do their best work collaboratively, with time built in to check on people and be checked on themselves.`,
-      `What unsettles ${name} is exclusion, or the feeling that they are the only one holding a relationship or a project together.`,
-    ]),
-    stressPatterns: block([
-      `Under stress, ${name} tends to turn inward as worry: overthinking whether they're doing enough for everyone else, struggling to say no, and losing confidence in their own judgment.`,
-      `Sustained pressure can leave them circling a decision rather than acting on it, since acting risks disappointing someone.`,
-    ]),
-    selfCare: block([
-      `The fastest way back to balance for ${name} in the moment is reassurance paired with a concrete next step — confirmation that they haven't let anyone down, plus something specific to do about it.`,
-      `The more durable fix is practising small, low-stakes "no"s regularly, so it doesn't take a crisis for a real boundary to finally come out.`,
-    ]),
-  }),
-  Metal: (name) => ({
-    needs: block([
-      `${name} is steadied by clearly defined expectations, consistent process, and time to get something right before it's judged. They do their best work when standards are explicit rather than assumed, and when their attention to detail is recognised as care rather than fussiness.`,
-      `What unsettles ${name} is ambiguity about what "good" looks like, and being rushed past a check they consider necessary.`,
-    ]),
-    stressPatterns: block([
-      `${name}'s stress tends to show up as narrowing focus: over-attending to small details at the expense of the bigger picture, becoming more critical of themselves and others, and taking it personally when standards or agreed process aren't followed.`,
-      `Under sustained pressure, ${name} can get stuck relitigating what already went wrong rather than moving on to what's next.`,
-    ]),
-    selfCare: block([
-      `The fastest way back to balance for ${name} in the moment is to physically step back from the details that have taken over — a short break, away from the screen, before returning to the work.`,
-      `The more durable fix is protected time to do things properly the first time, so quality doesn't have to be defended after the fact.`,
-    ]),
-  }),
-  Water: (name) => ({
-    needs: block([
-      `${name} is steadied by quiet, unstructured time to think something all the way through before committing to it. They do their best work alone or in low-noise settings, with enough runway to reach their own conclusions rather than being rushed to a verdict.`,
-      `What unsettles ${name} is being pressed for an instant answer, or having their need for space mistaken for disinterest.`,
-    ]),
-    stressPatterns: block([
-      `Under stress, ${name} tends to withdraw further than usual: harder to reach, slower to respond, and more likely to sit with a problem indefinitely rather than act on a decision they haven't fully turned over.`,
-      `Sustained pressure can tip into an isolation that looks, from the outside, more like disengagement than overload.`,
-    ]),
-    selfCare: block([
-      `The fastest way back to balance for ${name} in the moment is a concrete small step or physical movement, since sitting alone with the problem can extend the stall rather than resolve it.`,
-      `The more durable fix is scheduling real, protected thinking time in advance, so solitude is a planned resource rather than something only reached for once withdrawal has already set in.`,
-    ]),
-  }),
+/**
+ * Per-element, per-intensity-tier narrative. "dominant" (Primary/Secondary)
+ * is full-strength, direct language — this is genuinely how the person
+ * operates. "moderate" (Third) is situational: present, but not their
+ * default. "minor" (Fourth/Lowest) is explicitly framed as rare and
+ * uncharacteristic — it should never read like a second personality. See
+ * tierForRankLabel in ./individualProfile.ts for the rank → tier mapping.
+ */
+const INDIVIDUAL_TEMPLATES: Record<Element, Record<ContentIntensityTier, IndividualTemplate>> = {
+  Wood: {
+    dominant: (name) => ({
+      needs: block([
+        `${name} is steadied by having room to act — a real decision to make, a clear target to move toward, and enough autonomy to choose their own next step rather than wait on someone else's timetable. They do their best work when there is genuine forward motion, whether that's a project, a debate, or a challenge worth taking on, and when the people around them treat their drive as an asset rather than something to be managed.`,
+        `What unsettles ${name} usually isn't conflict itself. It's friction with no clear direction, or being asked to slow down without being told why.`,
+      ]),
+      stressPatterns: block([
+        `Under stress, ${name}'s impatience tends to compress into force: quicker to frustration when something is moving slower than it should, more likely to read a disagreement as an obstacle than as input, and prone to push a plan forward without checking whether everyone else is still on board.`,
+        `Under sustained pressure, ${name} can start treating other people's caution as a challenge to their competence, when it usually isn't one.`,
+      ]),
+      selfCare: block([
+        `The fastest way back to balance for ${name}, in the moment, is physical rather than verbal — movement discharges the charge that talking it through usually can't touch yet.`,
+        `Once the edge is off, the more durable fix is a regular, deliberate pause: a standing check-in, or simply asking "what's the next right step" out loud instead of just moving, so their forward motion doesn't outrun everyone else's ability to keep up.`,
+      ]),
+    }),
+    moderate: (name) => ({
+      needs: block([
+        `Wood isn't ${name}'s default lens, but it sits close enough to the surface that a real decision or a clear target still noticeably steadies them — just not as constantly as it would for someone leading with it. They tend to reach for it when a situation genuinely calls for forward motion, rather than bringing it to everything.`,
+      ]),
+      stressPatterns: block([
+        `Under real pressure, ${name} can show a flash of Wood-style impatience — pushing to move faster, or reading a delay as an obstacle — but it tends to surface situationally rather than being their go-to stress reaction.`,
+      ]),
+      selfCare: block([
+        `When this does show up, a short burst of physical movement or a concrete next step tends to settle it quickly for ${name}, though it's rarely the first thing they need.`,
+      ]),
+    }),
+    minor: (name) => ({
+      needs: block([
+        `Wood is one of ${name}'s least-accessed lenses, so having room to act on their own timetable isn't something they naturally need or reach for — decisiveness and forward motion are more likely to come from someone else in the room.`,
+      ]),
+      stressPatterns: block([
+        `This isn't how ${name} typically reacts under stress. On the rare occasion sustained pressure pushes them into it, it can look like an uncharacteristic flash of impatience or bluntness — worth noticing precisely because it's so unlike them, not their normal stress signature.`,
+      ]),
+      selfCare: block([
+        `Since this isn't ${name}'s natural territory, deliberately borrowing from it — making a call rather than waiting, choosing a next step instead of gathering more input — is more useful as an occasional stretch than a self-care habit.`,
+      ]),
+    }),
+  },
+  Fire: {
+    dominant: (name) => ({
+      needs: block([
+        `${name} is steadied by warmth and things to look forward to — genuine two-way connection, room for playfulness, and permission to feel and express emotion openly rather than keep it contained. They do their best work in an environment charged with possibility and real human contact, where enthusiasm is met rather than quietly dampened.`,
+        `What unsettles ${name} isn't seriousness itself. It's isolation, being overlooked, or having their optimism read as naivety.`,
+      ]),
+      stressPatterns: block([
+        `Under stress, ${name} tends to scatter: harder to focus or hold on to details, quicker to swing between moods, and prone to over-commit in the hope that saying yes keeps the good feeling going.`,
+        `Sustained pressure can tip into a restlessness or anxiety that looks, from the outside, more like distraction than distress.`,
+      ]),
+      selfCare: block([
+        `The fastest way back to balance for ${name} in the moment is genuine human contact — being heard, reassured, and reminded that people still have their back.`,
+        `Once that initial wave passes, the more durable fix is building in real rest and unstructured downtime, so their enthusiasm has room to recover instead of running at full charge indefinitely.`,
+      ]),
+    }),
+    moderate: (name) => ({
+      needs: block([
+        `Fire isn't the lens ${name} leads with, but warmth and connection still noticeably lift them when a situation offers it — they're just not actively seeking it out the way someone leading with Fire would.`,
+      ]),
+      stressPatterns: block([
+        `Under real pressure, ${name} can show flashes of Fire's scatter — harder to focus, quicker to over-commit — but it tends to surface situationally, in specific moments, rather than being their default stress pattern.`,
+      ]),
+      selfCare: block([
+        `When it does show up, a bit of genuine connection or a lighter moment tends to settle ${name} quickly, though it's not usually the first thing they reach for.`,
+      ]),
+    }),
+    minor: (name) => ({
+      needs: block([
+        `Fire is one of ${name}'s least-accessed lenses, so warmth-seeking and open emotional expression aren't things they naturally need from a room — connection is more likely to come to them through someone else's initiative than their own.`,
+      ]),
+      stressPatterns: block([
+        `This isn't how ${name} typically reacts under stress. On the rare occasion sustained pressure pushes them into it, it can look like an uncharacteristic burst of scatter or over-commitment — notable mainly because it's so unlike their usual pattern.`,
+      ]),
+      selfCare: block([
+        `Since this isn't ${name}'s natural territory, deliberately borrowing from it — allowing more open enthusiasm, leaning into connection rather than holding back — is more useful as an occasional stretch than a regular self-care habit.`,
+      ]),
+    }),
+  },
+  Earth: {
+    dominant: (name) => ({
+      needs: block([
+        `${name} is steadied by belonging and being genuinely needed — a settled place in the group, regular contact, and the sense that their care for others is actually landing rather than going unnoticed. They do their best work collaboratively, with time built in to check on people and be checked on themselves.`,
+        `What unsettles ${name} is exclusion, or the feeling that they are the only one holding a relationship or a project together.`,
+      ]),
+      stressPatterns: block([
+        `Under stress, ${name} tends to turn inward as worry: overthinking whether they're doing enough for everyone else, struggling to say no, and losing confidence in their own judgment.`,
+        `Sustained pressure can leave them circling a decision rather than acting on it, since acting risks disappointing someone.`,
+      ]),
+      selfCare: block([
+        `The fastest way back to balance for ${name} in the moment is reassurance paired with a concrete next step — confirmation that they haven't let anyone down, plus something specific to do about it.`,
+        `The more durable fix is practising small, low-stakes "no"s regularly, so it doesn't take a crisis for a real boundary to finally come out.`,
+      ]),
+    }),
+    moderate: (name) => ({
+      needs: block([
+        `Earth isn't ${name}'s default lens, but belonging and being useful to the people around them still noticeably steady them when a situation calls for it — just not as the constant undertone it would be for someone leading with it.`,
+      ]),
+      stressPatterns: block([
+        `Under real pressure, ${name} can show flashes of Earth's people-pleasing pull — worrying whether they're doing enough for others, hesitating to say no — but it tends to show up situationally rather than as their default reaction.`,
+      ]),
+      selfCare: block([
+        `When it does show up, a bit of direct reassurance plus something concrete to act on tends to settle it for ${name} fairly quickly, though it's not usually what they need first.`,
+      ]),
+    }),
+    minor: (name) => ({
+      needs: block([
+        `Earth is one of ${name}'s least-accessed lenses, so being needed and checked on isn't something they naturally chase — belonging is more likely to be something they extend to others than something they require for themselves.`,
+      ]),
+      stressPatterns: block([
+        `This isn't how ${name} typically reacts under stress. On the rare occasion sustained pressure pushes them into it, it can look like an uncharacteristic bout of people-pleasing or indecision — notable mainly for how unlike their usual pattern it is.`,
+      ]),
+      selfCare: block([
+        `Since this isn't ${name}'s natural territory, deliberately borrowing from it — checking in on how a decision lands for others, practising visible care — is more useful as an occasional stretch than a regular self-care habit.`,
+      ]),
+    }),
+  },
+  Metal: {
+    dominant: (name) => ({
+      needs: block([
+        `${name} is steadied by clearly defined expectations, consistent process, and time to get something right before it's judged. They do their best work when standards are explicit rather than assumed, and when their attention to detail is recognised as care rather than fussiness.`,
+        `What unsettles ${name} is ambiguity about what "good" looks like, and being rushed past a check they consider necessary.`,
+      ]),
+      stressPatterns: block([
+        `${name}'s stress tends to show up as narrowing focus: over-attending to small details at the expense of the bigger picture, becoming more critical of themselves and others, and taking it personally when standards or agreed process aren't followed.`,
+        `Under sustained pressure, ${name} can get stuck relitigating what already went wrong rather than moving on to what's next.`,
+      ]),
+      selfCare: block([
+        `The fastest way back to balance for ${name} in the moment is to physically step back from the details that have taken over — a short break, away from the screen, before returning to the work.`,
+        `The more durable fix is protected time to do things properly the first time, so quality doesn't have to be defended after the fact.`,
+      ]),
+    }),
+    moderate: (name) => ({
+      needs: block([
+        `Metal isn't ${name}'s default lens, but clear standards and a chance to get something right still noticeably steady them when the situation calls for precision — just not as a constant requirement the way it would be for someone leading with it.`,
+      ]),
+      stressPatterns: block([
+        `Under real pressure, ${name} can show flashes of Metal's narrowing focus — getting caught up in details, more critical than usual — but it tends to surface situationally rather than being their go-to stress reaction.`,
+      ]),
+      selfCare: block([
+        `When it does show up, a short step back from the details tends to settle it for ${name} fairly quickly, though it's rarely the first thing they need.`,
+      ]),
+    }),
+    minor: (name) => ({
+      needs: block([
+        `Metal is one of ${name}'s least-accessed lenses, so explicit standards and process aren't something they naturally require to feel steady — precision is more likely to come from someone else in the room than from their own default setting.`,
+      ]),
+      stressPatterns: block([
+        `This isn't how ${name} typically reacts under stress. On the rare occasion sustained pressure pushes them into it, it can look like an uncharacteristic bout of nitpicking or rigidity — notable mainly for how unlike their usual pattern it is.`,
+      ]),
+      selfCare: block([
+        `Since this isn't ${name}'s natural territory, deliberately borrowing from it — setting an explicit standard, checking a detail before moving on — is more useful as an occasional stretch than a regular self-care habit.`,
+      ]),
+    }),
+  },
+  Water: {
+    dominant: (name) => ({
+      needs: block([
+        `${name} is steadied by quiet, unstructured time to think something all the way through before committing to it. They do their best work alone or in low-noise settings, with enough runway to reach their own conclusions rather than being rushed to a verdict.`,
+        `What unsettles ${name} is being pressed for an instant answer, or having their need for space mistaken for disinterest.`,
+      ]),
+      stressPatterns: block([
+        `Under stress, ${name} tends to withdraw further than usual: harder to reach, slower to respond, and more likely to sit with a problem indefinitely rather than act on a decision they haven't fully turned over.`,
+        `Sustained pressure can tip into an isolation that looks, from the outside, more like disengagement than overload.`,
+      ]),
+      selfCare: block([
+        `The fastest way back to balance for ${name} in the moment is a concrete small step or physical movement, since sitting alone with the problem can extend the stall rather than resolve it.`,
+        `The more durable fix is scheduling real, protected thinking time in advance, so solitude is a planned resource rather than something only reached for once withdrawal has already set in.`,
+      ]),
+    }),
+    moderate: (name) => ({
+      needs: block([
+        `Water isn't ${name}'s default lens, but quiet thinking time still noticeably steadies them when a situation genuinely calls for it — just not as a constant requirement the way it would be for someone leading with it.`,
+      ]),
+      stressPatterns: block([
+        `Under real pressure, ${name} can show flashes of Water's withdrawal — going quieter, slower to respond — but it tends to surface situationally rather than being their go-to stress reaction.`,
+      ]),
+      selfCare: block([
+        `When it does show up, a bit of real, protected thinking time tends to settle it for ${name} fairly quickly, though it's rarely the first thing they need.`,
+      ]),
+    }),
+    minor: (name) => ({
+      needs: block([
+        `Water is one of ${name}'s least-accessed lenses, so quiet, unstructured thinking time isn't something they naturally seek out to feel steady — reflection is more likely to happen for them in the middle of doing something than as protected time set apart from it.`,
+      ]),
+      stressPatterns: block([
+        `This isn't how ${name} typically reacts under stress — withdrawal and going quiet are not their normal stress signature. On the rare occasion sustained pressure pushes them into it, it's likely to look like an uncharacteristic quietness rather than the deliberate reflection Water represents at full strength, and it's worth noticing precisely because it's so unlike them.`,
+      ]),
+      selfCare: block([
+        `Since this isn't ${name}'s natural territory, deliberately borrowing from it — building in a bit of quiet, unhurried thinking time before deciding — is more useful as an occasional stretch than a regular self-care habit.`,
+      ]),
+    }),
+  },
 };
 
 /** First name only — reads naturally when repeated through several paragraphs. */
@@ -126,15 +259,17 @@ export function firstNameOf(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] || fullName;
 }
 
-export function buildDemoIndividualContent(fullName: string): Record<Element, IndividualProfileContent> {
+export function buildDemoIndividualContent(fullName: string): IndividualProfileContentLibrary {
   const name = firstNameOf(fullName);
-  return {
-    Wood: INDIVIDUAL_TEMPLATES.Wood(name),
-    Fire: INDIVIDUAL_TEMPLATES.Fire(name),
-    Earth: INDIVIDUAL_TEMPLATES.Earth(name),
-    Metal: INDIVIDUAL_TEMPLATES.Metal(name),
-    Water: INDIVIDUAL_TEMPLATES.Water(name),
-  };
+  const elements = Object.keys(INDIVIDUAL_TEMPLATES) as Element[];
+  return Object.fromEntries(
+    elements.map((element) => [
+      element,
+      Object.fromEntries(
+        INTENSITY_TIERS.map((tier) => [tier, INDIVIDUAL_TEMPLATES[element][tier](name)])
+      ),
+    ])
+  ) as IndividualProfileContentLibrary;
 }
 
 export const DEMO_INDIVIDUAL_FRAMING = {
@@ -157,6 +292,11 @@ export const DEMO_INDIVIDUAL_FRAMING = {
   // element-based sequencing mapping itself as unconfirmed with Carey — so
   // this stays a placeholder even in the demo.
   sequencing: pending("explanation of the sequencing roles"),
+  sequencingArchitecture: block([
+    "Your five elements don't just have a strength — they have a position. Read top to bottom, your ranked scores form a chain: the element you lead with, down to the one you reach for last. That order is your sequencing architecture, and it shapes how each element actually shows up for you day to day, separately from how strong it is in absolute terms.",
+    "An element near the front of your chain is close to instinctive — it's part of your first response to a situation, before you've had to think about it. An element further back doesn't disappear; it just arrives later, after the elements ahead of it have already shaped how you've engaged. That's not a weakness in the trailing element itself — it's a statement about when it gets a turn.",
+    "The practical edge case worth watching for is when two functions both trail your sequence at once. A decision or a direction can go out fully formed on the elements that lead your chain, while whatever the trailing elements would have added — a consequence check, a threshold check, a beat of reflection — hasn't had a chance to weigh in yet, simply because it processes last.",
+  ]),
   closing: block([
     "None of this is a verdict. It's a description of tendencies under specific conditions, useful for noticing patterns sooner and choosing, deliberately, how to respond to them.",
   ]),
@@ -533,6 +673,10 @@ export const DEMO_PAIRWISE_FRAMING = {
   // Distortions) is not in the book at all, so there's no source material to
   // draft this from — stays a placeholder even in the demo.
   fieldExplainer: pending("what the Field is, for a workplace audience"),
+  sequencingComparisonExplainer: block([
+    "Score alone doesn't tell you which of two people's shared elements is more in play — position does. Someone can score higher on Metal in absolute terms and still have it trail their own sequence, while the other person's lower-scoring Metal sits near the front of theirs. When that happens, it's the second person's Metal that's more likely to actually be in the room early, doing quality-gate work before things are locked in.",
+    "That's what a sequencing comparison looks at: not just who scores higher on an element, but whose version of it arrives earlier in their own processing — and where the two chains agree or pull apart. The sharpest useful signal is usually the element with the biggest rank gap between the two of you: whoever has it further forward is the one more likely to be supplying that function for the pair, whether or not either of you has said so out loud.",
+  ]),
   closing: block([
     "Either person can shift this dynamic without waiting for the other to go first. Noticing the loop earlier is most of the work.",
   ]),

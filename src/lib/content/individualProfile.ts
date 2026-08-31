@@ -13,7 +13,7 @@
  * other is a data change in this file rather than a change to the template.
  */
 
-import { ELEMENTS, type Element } from "../archetypes";
+import { ELEMENTS, type Element, type RankedElement } from "../archetypes";
 import { allPlaceholders, pending, type ContentBlock } from "./blocks";
 
 export type { ContentBlock };
@@ -28,20 +28,54 @@ export type IndividualProfileContent = {
 };
 
 /**
- * Per-element copy. Every block is a placeholder until Carey's content
- * library v1 is approved — see docs/BUILD_PLAN.md Section 10 (Phase 0).
+ * How strongly an element's narrative should read, based on where it ranks
+ * in a person's profile — not just which element it is. A person's lowest
+ * element shouldn't read with the same certainty ("X tends to...") as their
+ * primary; it's a lens they rarely reach for, not a second personality.
+ * Primary/Secondary get full-strength "this is how you operate" language,
+ * Third is framed as situational, Fourth/Lowest as rare and faint.
  */
-export const INDIVIDUAL_PROFILE_CONTENT: Record<Element, IndividualProfileContent> =
-  Object.fromEntries(
-    ELEMENTS.map((element) => [
-      element,
-      {
-        needs: pending(`${element} needs list`),
-        stressPatterns: pending(`${element} stress patterns`),
-        selfCare: pending(`${element} self-care guidance`),
-      },
-    ])
-  ) as Record<Element, IndividualProfileContent>;
+export type ContentIntensityTier = "dominant" | "moderate" | "minor";
+
+export const INTENSITY_TIERS: ContentIntensityTier[] = ["dominant", "moderate", "minor"];
+
+const TIER_BY_RANK_LABEL: Record<RankedElement["label"], ContentIntensityTier> = {
+  Primary: "dominant",
+  Secondary: "dominant",
+  Third: "moderate",
+  Fourth: "minor",
+  Lowest: "minor",
+};
+
+export function tierForRankLabel(label: RankedElement["label"]): ContentIntensityTier {
+  return TIER_BY_RANK_LABEL[label];
+}
+
+/** Per-element, per-intensity-tier copy — see IndividualProfileContentLibrary. */
+export type IndividualProfileContentLibrary = Record<
+  Element,
+  Record<ContentIntensityTier, IndividualProfileContent>
+>;
+
+/**
+ * Per-element, per-rank-tier copy. Every block is a placeholder until Carey's
+ * content library v1 is approved — see docs/BUILD_PLAN.md Section 10 (Phase 0).
+ */
+export const INDIVIDUAL_PROFILE_CONTENT: IndividualProfileContentLibrary = Object.fromEntries(
+  ELEMENTS.map((element) => [
+    element,
+    Object.fromEntries(
+      INTENSITY_TIERS.map((tier) => [
+        tier,
+        {
+          needs: pending(`${element} needs list (${tier})`),
+          stressPatterns: pending(`${element} stress patterns (${tier})`),
+          selfCare: pending(`${element} self-care guidance (${tier})`),
+        },
+      ])
+    ),
+  ])
+) as IndividualProfileContentLibrary;
 
 /**
  * Report-level copy that isn't tied to one element.
@@ -61,16 +95,29 @@ export const INDIVIDUAL_PROFILE_FRAMING = {
   primaryArchetype: pending("what it means to lead with your primary archetype"),
   lowestArchetype: pending("how to work with your lowest element"),
   sequencing: pending("explanation of the sequencing roles"),
+  /**
+   * Generic (not per-person) explainer for the new "Your sequencing
+   * architecture" section: why rank position — not just which element —
+   * determines whether a function is instinctive/early or deliberate/late
+   * for this person. Distinct from `sequencing` above, which explains what
+   * each role label (Activate, Express, ...) means; this explains why WHERE
+   * that role sits in the person's own chain changes how readily it fires.
+   */
+  sequencingArchitecture: pending(
+    "what a personal sequencing chain is and why rank position changes how a function shows up"
+  ),
   closing: pending("closing guidance / next steps"),
 } satisfies Record<string, ContentBlock | Record<string, string>>;
 
 /** True when every block in the library is still a placeholder. */
 export function contentLibraryIsUnapproved(): boolean {
-  const elementBlocks = ELEMENTS.flatMap((element) => [
-    INDIVIDUAL_PROFILE_CONTENT[element].needs,
-    INDIVIDUAL_PROFILE_CONTENT[element].stressPatterns,
-    INDIVIDUAL_PROFILE_CONTENT[element].selfCare,
-  ]);
+  const elementBlocks = ELEMENTS.flatMap((element) =>
+    INTENSITY_TIERS.flatMap((tier) => [
+      INDIVIDUAL_PROFILE_CONTENT[element][tier].needs,
+      INDIVIDUAL_PROFILE_CONTENT[element][tier].stressPatterns,
+      INDIVIDUAL_PROFILE_CONTENT[element][tier].selfCare,
+    ])
+  );
   const framingBlocks = Object.values(INDIVIDUAL_PROFILE_FRAMING).filter(
     (value): value is ContentBlock => "status" in value
   );

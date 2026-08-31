@@ -91,6 +91,27 @@ This is a **Phase 1 scaffold**, not a working product yet. What exists:
   `[PLACEHOLDER: pending Carey's content library]` in the report. Approving
   copy means changing data in that file, not the template. Do not fill those
   blocks in with invented psychological content or book text.
+- **Individual profile narrative is keyed by rank tier, not just element.**
+  Each of the five "Profile in rank order" cards used to always render the
+  same per-element copy regardless of whether that element was the person's
+  Primary or their Lowest — so a Lowest-element card read exactly as
+  strongly as the Primary card, describing traits as if they were the
+  person's default stress reaction when in fact that element is the one
+  they reach for least. Fixed 2026-08-31 (Glenn's feedback, using Brooke
+  Ashworth — Primary Earth, Lowest Water — as the concrete example): the
+  content library is now `Record<Element, Record<ContentIntensityTier,
+  IndividualProfileContent>>` (`IndividualProfileContentLibrary` in
+  `src/lib/content/individualProfile.ts`), where `ContentIntensityTier` is
+  `"dominant" | "moderate" | "minor"`, mapped from `RankedElement.label` via
+  `tierForRankLabel()`: Primary/Secondary → dominant (full-strength, "you
+  tend to..."), Third → moderate (situational, hedged), Fourth/Lowest →
+  minor (explicitly framed as rare/uncharacteristic — "this isn't how you
+  typically react"). `src/lib/reports/individualProfile.ts`'s `toSection()`
+  resolves the tier per section before looking up content. Applies to both
+  the demo content (`src/lib/content/demoNarrative.ts`, fully authored for
+  all 5 elements × 3 tiers) and the real, still-placeholder library — so
+  when Carey's content is eventually authored, it needs a dominant/moderate/
+  minor variant per element, not just one.
 - Report styles are plain CSS in `src/components/reports/reportStyles.ts`, not
   Tailwind — Chromium renders the PDF from `renderToStaticMarkup` output with
   no Tailwind build attached, so one inlined stylesheet is what keeps PDF and
@@ -131,6 +152,27 @@ were confirmed:
    coded as element-based (Wood is always "Activate," etc.). Might actually
    be rank-position-based. One-table change if Carey corrects it — don't
    let it spread across the codebase before it's confirmed.
+   **Update (2026-09-01, from real personalised guides Carey has already
+   authored for named individuals, supplied by Glenn — not the book, not
+   in this repo):** those guides are consistent with a third reading that
+   isn't quite either option above — the role label itself IS element-based
+   (matches `SEQUENCING_ROLE` in this file exactly, e.g. Water is always
+   "model downstream consequences"), but how strongly/instinctively that
+   role shows up for a given person depends on where that element sits in
+   *their own* rank order, not on the element alone. An element near the
+   front of someone's personal chain reads as instinctive/front-of-
+   processing; one near the back reads as available only with deliberate
+   effort — and when a person's two lowest-ranked elements are a
+   consequence-function and a quality-function together, decisions can go
+   out without either check. Implemented as `sequencingArchitecture`
+   (individual profile) and `sequencingComparisonExplainer` +
+   `biggestSequenceGap` (pairwise) — see `src/lib/reports/
+   individualProfile.ts`, `src/lib/reports/pairwiseReport.ts`,
+   `src/lib/content/demoNarrative.ts`. This is still inferred from Carey's
+   own authored examples, not a direct confirmation from her — treat as
+   strong evidence, not settled, until she confirms it directly (Glenn is
+   meeting her 2026-09-02 and this is on the list — see
+   docs/QUESTIONS_FOR_CAREY.md Part B.2).
 3. **IP/licensing scope**: don't reproduce verbatim text from Carey's book
    (assessment item wording, needs lists, Ayurvedic charts) anywhere in
    customer-facing copy or seed/demo data until licensing is confirmed.

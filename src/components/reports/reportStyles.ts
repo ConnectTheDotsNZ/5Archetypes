@@ -142,6 +142,14 @@ export const REPORT_CSS = `
 .fa-placeholder-marker { font-weight: 700; display: block; }
 
 .fa-inline-list { margin: 0.3rem 0 0; padding-left: 1.1rem; }
+
+.fa-sequence-chain {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: 0.2rem 0 0.8rem;
+}
 .fa-inline-list li { margin: 0.15rem 0; }
 
 /* --- pairwise report --------------------------------------------------- */
